@@ -524,13 +524,13 @@ func TestGetSecret(t *testing.T) {
 			},
 			rr: esv1alpha1.ExternalSecretDataRemoteRef{
 				Key:      "/baz",
-				Property: "DOES NOT EXIST",
+				Property: "INVALPROP",
 			},
 			apiOutput: &awssm.GetSecretValueOutput{
 				SecretString: aws.String(`{"/shmoo": "bang"}`),
 			},
 			apiErr:         nil,
-			expectError:    "has no property",
+			expectError:    "key INVALPROP does not exist in secret",
 			expectedSecret: "",
 		},
 		{
@@ -541,13 +541,13 @@ func TestGetSecret(t *testing.T) {
 			},
 			rr: esv1alpha1.ExternalSecretDataRemoteRef{
 				Key:      "/baz",
-				Property: "/shmoo",
+				Property: "INVALPROP",
 			},
 			apiOutput: &awssm.GetSecretValueOutput{
 				SecretString: aws.String(`------`),
 			},
 			apiErr:         nil,
-			expectError:    "unable to unmarshal secret",
+			expectError:    "key INVALPROP does not exist in secret",
 			expectedSecret: "",
 		},
 		{
