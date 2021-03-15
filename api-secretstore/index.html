@@ -36,7 +36,7 @@
     
     
       
-        <title>SecretStore - External Secrets Opereator</title>
+        <title>SecretStore - External Secrets Operator</title>
       
     
     
@@ -82,7 +82,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="External Secrets Opereator" class="md-header-nav__button md-logo">
+        <a href=".." title="External Secrets Operator" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -95,7 +95,7 @@
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
             <span class="md-header-nav__topic">
-              External Secrets Opereator
+              External Secrets Operator
             </span>
             <span class="md-header-nav__topic">
               
@@ -174,12 +174,12 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href=".." title="External Secrets Opereator" class="md-nav__button md-logo">
+    <a href=".." title="External Secrets Operator" class="md-nav__button md-logo">
       
         <i class="md-icon"></i>
       
     </a>
-    External Secrets Opereator
+    External Secrets Operator
   </label>
   
     <div class="md-nav__source">
@@ -604,6 +604,18 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../contributing-coc/" title="Code of Conduct" class="md-nav__link">
+      Code of Conduct
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -632,7 +644,7 @@ The SecretStore maps to exactly one instance of an external API.</p>
 <div class="highlight"><pre><span></span><span class="nt">apiVerson</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SecretStore</span>
 <span class="nt">metadata</span><span class="p">:</span>
-  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">vault</span>
+  <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">example</span>
   <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">example-ns</span>
 <span class="nt">spec</span><span class="p">:</span>
 
@@ -646,8 +658,9 @@ The SecretStore maps to exactly one instance of an external API.</p>
   <span class="nt">provider</span><span class="p">:</span>
 
     <span class="c1"># (1): AWS Secrets Manager</span>
-    <span class="c1"># AWSSM configures this store to sync secrets using AWS Secret Manager provider</span>
-    <span class="nt">awssm</span><span class="p">:</span>
+    <span class="c1"># aws configures this store to sync secrets using AWS Secret Manager provider</span>
+    <span class="nt">aws</span><span class="p">:</span>
+      <span class="nt">service</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SecretsManager</span>
       <span class="c1"># Role is a Role ARN which the SecretManager provider will assume</span>
       <span class="nt">role</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">iam-role</span>
       <span class="c1"># AWS Region to be used for the provider</span>

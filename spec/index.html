@@ -36,7 +36,7 @@
     
     
       
-        <title>API specification - External Secrets Opereator</title>
+        <title>API specification - External Secrets Operator</title>
       
     
     
@@ -82,7 +82,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="External Secrets Opereator" class="md-header-nav__button md-logo">
+        <a href=".." title="External Secrets Operator" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -95,7 +95,7 @@
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
             <span class="md-header-nav__topic">
-              External Secrets Opereator
+              External Secrets Operator
             </span>
             <span class="md-header-nav__topic">
               
@@ -174,12 +174,12 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href=".." title="External Secrets Opereator" class="md-nav__button md-logo">
+    <a href=".." title="External Secrets Operator" class="md-nav__button md-logo">
       
         <i class="md-icon"></i>
       
     </a>
-    External Secrets Opereator
+    External Secrets Operator
   </label>
   
     <div class="md-nav__source">
@@ -604,6 +604,18 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../contributing-coc/" title="Code of Conduct" class="md-nav__link">
+      Code of Conduct
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -642,14 +654,14 @@
 
 <p>Resource Types:
 <ul></ul>
-<h3 id="external-secrets.io/v1alpha1.AWSSMAuth">AWSSMAuth
+<h3 id="external-secrets.io/v1alpha1.AWSAuth">AWSAuth
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#external-secrets.io/v1alpha1.AWSSMProvider">AWSSMProvider</a>)
+<a href="#external-secrets.io/v1alpha1.AWSProvider">AWSProvider</a>)
 </p>
 <p>
-<p>AWSSMAuth contains a secretRef for credentials.</p>
+<p>AWSAuth contains a secretRef for credentials.</p>
 </p>
 <table>
 <thead>
@@ -663,8 +675,8 @@
 <td>
 <code>secretRef</code></br>
 <em>
-<a href="#external-secrets.io/v1alpha1.AWSSMAuthSecretRef">
-AWSSMAuthSecretRef
+<a href="#external-secrets.io/v1alpha1.AWSAuthSecretRef">
+AWSAuthSecretRef
 </a>
 </em>
 </td>
@@ -673,14 +685,14 @@ AWSSMAuthSecretRef
 </tr>
 </tbody>
 </table>
-<h3 id="external-secrets.io/v1alpha1.AWSSMAuthSecretRef">AWSSMAuthSecretRef
+<h3 id="external-secrets.io/v1alpha1.AWSAuthSecretRef">AWSAuthSecretRef
 </h3>
 <p>
 (<em>Appears on:</em>
-<a href="#external-secrets.io/v1alpha1.AWSSMAuth">AWSSMAuth</a>)
+<a href="#external-secrets.io/v1alpha1.AWSAuth">AWSAuth</a>)
 </p>
 <p>
-<p>AWSSMAuthSecretRef holds secret references for aws credentials
+<p>AWSAuthSecretRef holds secret references for aws credentials
 both AccessKeyID and SecretAccessKey must be defined in order to properly authenticate.</p>
 </p>
 <table>
@@ -715,14 +727,14 @@ github.com/external-secrets/external-secrets/apis/meta/v1.SecretKeySelector
 </tr>
 </tbody>
 </table>
-<h3 id="external-secrets.io/v1alpha1.AWSSMProvider">AWSSMProvider
+<h3 id="external-secrets.io/v1alpha1.AWSProvider">AWSProvider
 </h3>
 <p>
 (<em>Appears on:</em>
 <a href="#external-secrets.io/v1alpha1.SecretStoreProvider">SecretStoreProvider</a>)
 </p>
 <p>
-<p>AWSSMProvider configures a store to sync secrets using the AWS Secret Manager provider.</p>
+<p>AWSProvider configures a store to sync secrets with AWS.</p>
 </p>
 <table>
 <thead>
@@ -734,10 +746,23 @@ github.com/external-secrets/external-secrets/apis/meta/v1.SecretKeySelector
 <tbody>
 <tr>
 <td>
+<code>service</code></br>
+<em>
+<a href="#external-secrets.io/v1alpha1.AWSServiceType">
+AWSServiceType
+</a>
+</em>
+</td>
+<td>
+<p>Service defines which service should be used to fetch the secrets</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>auth</code></br>
 <em>
-<a href="#external-secrets.io/v1alpha1.AWSSMAuth">
-AWSSMAuth
+<a href="#external-secrets.io/v1alpha1.AWSAuth">
+AWSAuth
 </a>
 </em>
 </td>
@@ -772,6 +797,32 @@ string
 </td>
 </tr>
 </tbody>
+</table>
+<h3 id="external-secrets.io/v1alpha1.AWSServiceType">AWSServiceType
+(<code>string</code> alias)</p></h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1alpha1.AWSProvider">AWSProvider</a>)
+</p>
+<p>
+<p>AWSServiceType is a enum that defines the service/API that is used to fetch the secrets.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr><td><p>&#34;ParameterStore&#34;</p></td>
+<td><p>AWSServiceParameterStore is the AWS SystemsManager ParameterStore.
+see: <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html">https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html</a></p>
+</td>
+</tr><tr><td><p>&#34;SecretsManager&#34;</p></td>
+<td><p>AWSServiceSecretsManager is the AWS SecretsManager.
+see: <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html">https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html</a></p>
+</td>
+</tr></tbody>
 </table>
 <h3 id="external-secrets.io/v1alpha1.ClusterSecretStore">ClusterSecretStore
 </h3>
@@ -912,15 +963,15 @@ ExternalSecretTarget
 <td>
 <code>refreshInterval</code></br>
 <em>
-string
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#duration-v1-meta">
+Kubernetes meta/v1.Duration
+</a>
 </em>
 </td>
 <td>
-<em>(Optional)</em>
-<p>RefreshInterval is the amount of time before the values reading again from the SecretStore provider
-Valid time units are &ldquo;ns&rdquo;, &ldquo;us&rdquo; (or &ldquo;µs&rdquo;), &ldquo;ms&rdquo;, &ldquo;s&rdquo;, &ldquo;m&rdquo;, &ldquo;h&rdquo; (from time.ParseDuration)
-May be set to zero to fetch and create it once
-TODO: Default to some value?</p>
+<p>RefreshInterval is the amount of time before the values are read again from the SecretStore provider
+Valid time units are &ldquo;ns&rdquo;, &ldquo;us&rdquo; (or &ldquo;µs&rdquo;), &ldquo;ms&rdquo;, &ldquo;s&rdquo;, &ldquo;m&rdquo;, &ldquo;h&rdquo;
+May be set to zero to fetch and create it once. Defaults to 1h.</p>
 </td>
 </tr>
 <tr>
@@ -1156,15 +1207,15 @@ ExternalSecretTarget
 <td>
 <code>refreshInterval</code></br>
 <em>
-string
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#duration-v1-meta">
+Kubernetes meta/v1.Duration
+</a>
 </em>
 </td>
 <td>
-<em>(Optional)</em>
-<p>RefreshInterval is the amount of time before the values reading again from the SecretStore provider
-Valid time units are &ldquo;ns&rdquo;, &ldquo;us&rdquo; (or &ldquo;µs&rdquo;), &ldquo;ms&rdquo;, &ldquo;s&rdquo;, &ldquo;m&rdquo;, &ldquo;h&rdquo; (from time.ParseDuration)
-May be set to zero to fetch and create it once
-TODO: Default to some value?</p>
+<p>RefreshInterval is the amount of time before the values are read again from the SecretStore provider
+Valid time units are &ldquo;ns&rdquo;, &ldquo;us&rdquo; (or &ldquo;µs&rdquo;), &ldquo;ms&rdquo;, &ldquo;s&rdquo;, &ldquo;m&rdquo;, &ldquo;h&rdquo;
+May be set to zero to fetch and create it once. Defaults to 1h.</p>
 </td>
 </tr>
 <tr>
@@ -1578,16 +1629,16 @@ SecretStoreStatus
 <tbody>
 <tr>
 <td>
-<code>awssm</code></br>
+<code>aws</code></br>
 <em>
-<a href="#external-secrets.io/v1alpha1.AWSSMProvider">
-AWSSMProvider
+<a href="#external-secrets.io/v1alpha1.AWSProvider">
+AWSProvider
 </a>
 </em>
 </td>
 <td>
 <em>(Optional)</em>
-<p>AWSSM configures this store to sync secrets using AWS Secret Manager provider</p>
+<p>AWS configures this store to sync secrets using AWS Secret Manager provider</p>
 </td>
 </tr>
 </tbody>
@@ -1789,25 +1840,6 @@ Kubernetes meta/v1.Time
 </td>
 </tr>
 </tbody>
-</table>
-<h3 id="external-secrets.io/v1alpha1.StoreProvider">StoreProvider
-(<code>string</code> alias)</p></h3>
-<p>
-</p>
-<table>
-<thead>
-<tr>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr><td><p>&#34;AWSSM&#34;</p></td>
-<td></td>
-</tr><tr><td><p>&#34;GCPSM&#34;</p></td>
-<td></td>
-</tr><tr><td><p>&#34;VAULT&#34;</p></td>
-<td></td>
-</tr></tbody>
 </table>
 <hr/>
 <p><em>
