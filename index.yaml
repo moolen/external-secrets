@@ -1,0 +1,22 @@
+apiVersion: v1
+entries:
+  external-secrets:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2021-04-30T21:10:45.594729021Z"
+    description: External secret management for Kubernetes
+    digest: ff46b588f5d435af434031e4285da83943316c2e6788b675bdb74c91fcb74267
+    home: https://github.com/external-secrets/external-secrets
+    keywords:
+    - kubernetes-external-secrets
+    - secrets
+    kubeVersion: '>= 1.11.0'
+    maintainers:
+    - email: kellinmcavoy@gmail.com
+      name: mcavoyk
+    name: external-secrets
+    type: application
+    urls:
+    - https://github.com/moolen/external-secrets/releases/download/external-secrets-0.1.1/external-secrets-0.1.1.tgz
+    version: 0.1.1
+generated: "2021-04-30T21:10:45.594736421Z"
