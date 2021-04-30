@@ -15,6 +15,11 @@ env:
   KUBEBUILDER_VERSION: '2.3.1'
   DOCKER_BUILDX_VERSION: 'v0.4.2'
 
+  # Common users. We can't run a step 'if secrets.GHCR_USERNAME != ""' but we can run
+  # a step 'if env.GHCR_USERNAME' != ""', so we copy these to succinctly test whether
+  # credentials have been provided before trying to run steps that need them.
+  GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+
 jobs:
   detect-noop:
     runs-on: ubuntu-18.04
@@ -288,8 +293,8 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Publish Artifacts
         run: make docker.push
