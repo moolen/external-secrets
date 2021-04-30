@@ -11,7 +11,7 @@ MAKEFLAGS     += --warn-undefined-variables
 all: build
 
 # Image registry for build/push image targets
-IMAGE_REGISTRY ?= ghcr.io/external-secrets/external-secrets
+IMAGE_REGISTRY ?= ghcr.io/moolen/external-secrets
 
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
