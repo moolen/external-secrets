@@ -8,6 +8,9 @@ on:
         required: true
         default: 'v0.1.0'
 
+env:
+  GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+
 jobs:
   release:
     name: Create Release
@@ -25,32 +28,30 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-  helm:
-    name: Helm Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Build Changelog
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v1.8.0
         with:
-          fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.4.0
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.2.0
+          configuration: "changelog.json"
+          toTag: ${{ github.event.inputs.version }}
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          CR_RELEASE_NAME_TEMPLATE: "helm-chart-{{ .Version }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: create changelog file
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+          CHANGELOG: ${{ steps.build_changelog.outputs.changelog }}
+        run: |
+          echo "Image: \`ghcr.io/${GITHUB_REPOSITORY}:${VERSION}\`" >> .changelog
+          echo "${CHANGELOG}" >> .changelog
+
+      - name: Update Release
+        uses: softprops/action-gh-release@v1
         with:
-          charts_dir: deploy/charts
+          tag_name: ${{ github.event.inputs.version }}
+          body_path: .changelog
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   promote:
     name: Promote Container Image

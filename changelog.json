@@ -1,0 +1,69 @@
+{
+  "categories": [
+    {
+      "title": "## 🚀 Features",
+      "labels": [
+        "feature",
+        "kind/feature",
+        "kind/design"
+      ]
+    },
+    {
+      "title": "## 🐛 Fixes",
+      "labels": [
+        "fix",
+        "chore",
+        "kind/bug",
+        "kind/cleanup"
+      ]
+    },
+    {
+      "title": "## 📖 Docs",
+      "labels": [
+        "docs",
+        "documentation",
+        "kind/documentation"
+      ]
+    },
+    {
+      "title": "## 🧪 Tests",
+      "labels": [
+        "test",
+        "kind/tests",
+        "kind/e2e"
+      ]
+    }
+  ],
+  "ignore_labels": [
+    "ignore"
+  ],
+  "sort": "ASC",
+  "template": "${{CHANGELOG}}\n\n## Uncategorized\n\n${{UNCATEGORIZED}}",
+  "pr_template": "- ${{TITLE}} #${{NUMBER}}",
+  "empty_template": "- no changes",
+  "label_extractor": [
+    {
+      "pattern": "(.) (.+)",
+      "target": "$1"
+    },
+    {
+      "pattern": "(.) (.+)",
+      "target": "$1",
+      "on_property": "title"
+    }
+  ],
+  "transformers": [
+    {
+      "pattern": "[\\-\\*] (\\[(...|TEST|CI|SKIP)\\])( )?(.+?)\n(.+?[\\-\\*] )(.+)",
+      "target": "- $4\n  - $6"
+    }
+  ],
+  "max_tags_to_fetch": 200,
+  "max_pull_requests": 200,
+  "max_back_track_time_days": 365,
+  "exclude_merge_branches": [],
+  "tag_resolver": {
+    "method": "semver"
+  },
+  "base_branches": []
+}
