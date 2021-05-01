@@ -8,6 +8,9 @@ on:
         required: true
         default: 'v0.1.0'
 
+env:
+  GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+
 jobs:
   release:
     name: Create Release
