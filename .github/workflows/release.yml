@@ -34,6 +34,7 @@ jobs:
         with:
           configuration: "changelog.json"
           toTag: ${{ github.event.inputs.version }}
+          commitMode: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
