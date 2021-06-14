@@ -836,6 +836,101 @@ see: <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.
 </td>
 </tr></tbody>
 </table>
+<h3 id="external-secrets.io/v1alpha1.AzureKVAuth">AzureKVAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1alpha1.AzureKVProvider">AzureKVProvider</a>)
+</p>
+<p>
+<p>Configuration used to authenticate with Azure.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>clientId</code></br>
+<em>
+github.com/external-secrets/external-secrets/apis/meta/v1.SecretKeySelector
+</em>
+</td>
+<td>
+<p>The Azure clientId of the service principle used for authentication.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>clientSecret</code></br>
+<em>
+github.com/external-secrets/external-secrets/apis/meta/v1.SecretKeySelector
+</em>
+</td>
+<td>
+<p>The Azure ClientSecret of the service principle used for authentication.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1alpha1.AzureKVProvider">AzureKVProvider
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1alpha1.SecretStoreProvider">SecretStoreProvider</a>)
+</p>
+<p>
+<p>Configures an store to sync secrets using Azure KV.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>vaultUrl</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Vault Url from which the secrets to be fetched from.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>tenantId</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>TenantID configures the Azure Tenant to send requests to.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>authSecretRef</code></br>
+<em>
+<a href="#external-secrets.io/v1alpha1.AzureKVAuth">
+AzureKVAuth
+</a>
+</em>
+</td>
+<td>
+<p>Auth configures how the operator authenticates with Azure.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <h3 id="external-secrets.io/v1alpha1.ClusterSecretStore">ClusterSecretStore
 </h3>
 <p>
@@ -1494,7 +1589,7 @@ ExternalSecretTemplateMetadata
 <td>
 <code>data</code></br>
 <em>
-map[string][]byte
+map[string]string
 </em>
 </td>
 <td>
@@ -1540,6 +1635,109 @@ map[string]string
 </td>
 <td>
 <em>(Optional)</em>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1alpha1.GCPSMAuth">GCPSMAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1alpha1.GCPSMProvider">GCPSMProvider</a>)
+</p>
+<p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>secretRef</code></br>
+<em>
+<a href="#external-secrets.io/v1alpha1.GCPSMAuthSecretRef">
+GCPSMAuthSecretRef
+</a>
+</em>
+</td>
+<td>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1alpha1.GCPSMAuthSecretRef">GCPSMAuthSecretRef
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1alpha1.GCPSMAuth">GCPSMAuth</a>)
+</p>
+<p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>secretAccessKeySecretRef</code></br>
+<em>
+github.com/external-secrets/external-secrets/apis/meta/v1.SecretKeySelector
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>The SecretAccessKey is used for authentication</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1alpha1.GCPSMProvider">GCPSMProvider
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1alpha1.SecretStoreProvider">SecretStoreProvider</a>)
+</p>
+<p>
+<p>GCPSMProvider Configures a store to sync secrets using the GCP Secret Manager provider.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>auth</code></br>
+<em>
+<a href="#external-secrets.io/v1alpha1.GCPSMAuth">
+GCPSMAuth
+</a>
+</em>
+</td>
+<td>
+<p>Auth defines the information necessary to authenticate against GCP</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>projectID</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>ProjectID project where secret is located</p>
 </td>
 </tr>
 </tbody>
@@ -1685,6 +1883,20 @@ AWSProvider
 </tr>
 <tr>
 <td>
+<code>azurekv</code></br>
+<em>
+<a href="#external-secrets.io/v1alpha1.AzureKVProvider">
+AzureKVProvider
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>AzureKV configures this store to sync secrets using Azure Key Vault provider</p>
+</td>
+</tr>
+<tr>
+<td>
 <code>vault</code></br>
 <em>
 <a href="#external-secrets.io/v1alpha1.VaultProvider">
@@ -1695,6 +1907,20 @@ VaultProvider
 <td>
 <em>(Optional)</em>
 <p>Vault configures this store to sync secrets using Hashi provider</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>gcpsm</code></br>
+<em>
+<a href="#external-secrets.io/v1alpha1.GCPSMProvider">
+GCPSMProvider
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>GCPSM configures this store to sync secrets using Google Cloud Platform Secret Manager provider</p>
 </td>
 </tr>
 </tbody>
@@ -1962,8 +2188,9 @@ resource is used as the app role secret.</p>
 <a href="#external-secrets.io/v1alpha1.VaultProvider">VaultProvider</a>)
 </p>
 <p>
-<p>Configuration used to authenticate with a Vault server.
-Only one of <code>tokenSecretRef</code>, <code>appRole</code> or <code>kubernetes</code> may be specified.</p>
+<p>VaultAuth is the configuration used to authenticate with a Vault server.
+Only one of <code>tokenSecretRef</code>, <code>appRole</code>,  <code>kubernetes</code>, <code>ldap</code> or <code>jwt</code>
+can be specified.</p>
 </p>
 <table>
 <thead>
@@ -2013,6 +2240,81 @@ VaultKubernetesAuth
 <em>(Optional)</em>
 <p>Kubernetes authenticates with Vault by passing the ServiceAccount
 token stored in the named Secret resource to the Vault server.</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>ldap</code></br>
+<em>
+<a href="#external-secrets.io/v1alpha1.VaultLdapAuth">
+VaultLdapAuth
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Ldap authenticates with Vault by passing username/password pair using
+the LDAP authentication method</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>jwt</code></br>
+<em>
+<a href="#external-secrets.io/v1alpha1.VaultJwtAuth">
+VaultJwtAuth
+</a>
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Jwt authenticates with Vault by passing role and JWT token using the
+JWT/OIDC authentication method</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1alpha1.VaultJwtAuth">VaultJwtAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1alpha1.VaultAuth">VaultAuth</a>)
+</p>
+<p>
+<p>VaultJwtAuth authenticates with Vault using the JWT/OIDC authentication
+method, with the role name and token stored in a Kubernetes Secret resource.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>role</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<em>(Optional)</em>
+<p>Role is a JWT role to authenticate using the JWT/OIDC Vault
+authentication method</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>secretRef</code></br>
+<em>
+github.com/external-secrets/external-secrets/apis/meta/v1.SecretKeySelector
+</em>
+</td>
+<td>
+<p>SecretRef to a key in a Secret resource containing JWT token to
+authenticate with Vault using the JWT/OIDC authentication method</p>
 </td>
 </tr>
 </tbody>
@@ -2108,6 +2410,51 @@ string
 <td>
 <p>A required field containing the Vault Role to assume. A Role binds a
 Kubernetes ServiceAccount with a set of Vault policies.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-secrets.io/v1alpha1.VaultLdapAuth">VaultLdapAuth
+</h3>
+<p>
+(<em>Appears on:</em>
+<a href="#external-secrets.io/v1alpha1.VaultAuth">VaultAuth</a>)
+</p>
+<p>
+<p>VaultLdapAuth authenticates with Vault using the LDAP authentication method,
+with the username and password stored in a Kubernetes Secret resource.</p>
+</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>username</code></br>
+<em>
+string
+</em>
+</td>
+<td>
+<p>Username is a LDAP user name used to authenticate using the LDAP Vault
+authentication method</p>
+</td>
+</tr>
+<tr>
+<td>
+<code>secretRef</code></br>
+<em>
+github.com/external-secrets/external-secrets/apis/meta/v1.SecretKeySelector
+</em>
+</td>
+<td>
+<p>SecretRef to a key in a Secret resource containing password for the LDAP
+user used to authenticate with Vault using the LDAP authentication
+method</p>
 </td>
 </tr>
 </tbody>
