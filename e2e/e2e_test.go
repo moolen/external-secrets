@@ -43,6 +43,9 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 
 	By("installing scoped eso")
 	addon.InstallGlobalAddon(addon.NewScopedESO(), cfg)
+
+	By("installing olm")
+	addon.InstallGlobalAddon(addon.NewOLM(), cfg)
 	return nil
 }, func([]byte) {})
 

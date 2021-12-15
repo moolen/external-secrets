@@ -14,6 +14,9 @@ cover.out
 **/charts/**/requirements.lock
 .tagmanifest
 deploy/charts/external-secrets/templates/crds/*.yaml
+deploy/olm/node_modules
+deploy/olm/bundles/*
+deploy/olm/community-operators
 
 site/
 e2e/k8s/deploy

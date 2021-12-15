@@ -14,7 +14,7 @@ BUILD_ARGS ?=
 all: $(addprefix build-,$(ARCH))
 
 # Image registry for build/push image targets
-IMAGE_REGISTRY ?= ghcr.io/external-secrets/external-secrets
+export IMAGE_REGISTRY ?= ghcr.io/external-secrets/external-secrets
 
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
@@ -34,10 +34,10 @@ endif
 # check if there are any existing `git tag` values
 ifeq ($(shell git tag),)
 # no tags found - default to initial tag `v0.0.0`
-VERSION := $(shell echo "v0.0.0-$$(git rev-list HEAD --count)-g$$(git describe --dirty --always)" | sed 's/-/./2' | sed 's/-/./2')
+export VERSION := $(shell echo "v0.0.0-$$(git rev-list HEAD --count)-g$$(git describe --dirty --always)" | sed 's/-/./2' | sed 's/-/./2')
 else
 # use tags
-VERSION := $(shell git describe --dirty --always --tags --exclude 'helm*' | sed 's/-/./2' | sed 's/-/./2')
+export VERSION := $(shell git describe --dirty --always --tags --exclude 'helm*' | sed 's/-/./2' | sed 's/-/./2')
 endif
 
 # ====================================================================================
@@ -89,7 +89,7 @@ test.e2e: generate ## Run e2e tests
 	@$(OK) go test unit-tests
 
 .PHONY: build
-build: $(addprefix build-,$(ARCH)) ## Build binary 
+build: $(addprefix build-,$(ARCH)) ## Build binary
 
 .PHONY: build-%
 build-%: generate ## Build binary for the specified arch
@@ -178,6 +178,17 @@ helm.generate: helm.docs ## Copy crds to helm chart directory
 		rm "$$i.bkp"; \
 	done
 	@$(OK) Finished generating helm chart files
+
+# ====================================================================================
+# OLM Bundle
+olm.bundle: helm.build
+	$(MAKE) -C ./deploy/olm generate VERSION=$(VERSION)
+
+olm.image.build:
+	$(MAKE) -C ./deploy/olm image.build VERSION=$(VERSION)
+
+olm.image.push:
+	$(MAKE) -C ./deploy/olm image.push VERSION=$(VERSION)
 
 # ====================================================================================
 # Documentation

@@ -5,6 +5,7 @@ SHELL       := /bin/bash
 IMG_TAG     = test
 IMG         = local/external-secrets-e2e:$(IMG_TAG)
 KIND_IMG    = "kindest/node:v1.21.1@sha256:69860bda5563ac81e3c0057d654b5253219618a22ec3a346306239bba8cfa1a6"
+BUNDLE_IMG  = ghcr.io/external-secrets/external-secrets-e2e-bundle
 BUILD_ARGS  ?=
 export FOCUS := $(FOCUS)
 
@@ -16,6 +17,12 @@ start-kind: ## Start kind cluster
 	  --image "$(KIND_IMG)"
 
 test: e2e-image ## Run e2e tests against current kube context
+	# prepare olm bundle & image
+	yq e -i '.version = "$(VERSION)"'  ../deploy/charts/external-secrets/Chart.yaml
+	$(MAKE) -C ../ olm.bundle
+	$(MAKE) -C ../ olm.image.build IMAGE_REGISTRY=$(BUNDLE_IMG)
+	$(MAKE) -C ../ olm.image.push  IMAGE_REGISTRY=$(BUNDLE_IMG)
+
 	$(MAKE) -C ../ docker.build \
 		IMAGE_REGISTRY=local/external-secrets \
 		VERSION=$(IMG_TAG) \
@@ -23,7 +30,7 @@ test: e2e-image ## Run e2e tests against current kube context
 		BUILD_ARGS="${BUILD_ARGS} --build-arg TARGETARCH=amd64 --build-arg TARGETOS=linux"
 	kind load docker-image --name="external-secrets" local/external-secrets:$(IMG_TAG)
 	kind load docker-image --name="external-secrets" $(IMG)
-	./run.sh
+	./run.sh $(VERSION)
 
 e2e-bin:
 	CGO_ENABLED=0 go run github.com/onsi/ginkgo/ginkgo build .

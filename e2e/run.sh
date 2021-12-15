@@ -23,6 +23,8 @@ fi
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
+E2E_VERSION=${1}
+
 echo "Kubernetes cluster:"
 kubectl get nodes -o wide
 kubectl describe node external-secrets-control-plane
@@ -50,6 +52,7 @@ kubectl run --rm \
   --restart=Never \
   --pod-running-timeout=10m \
   --env="FOCUS=${FOCUS:-.*}" \
+  --env="E2E_VERSION=${E2E_VERSION:-}" \
   --env="GCP_SM_SA_JSON=${GCP_SM_SA_JSON:-}" \
   --env="GCP_PROJECT_ID=${GCP_PROJECT_ID:-}" \
   --env="AZURE_CLIENT_ID=${AZURE_CLIENT_ID:-}" \

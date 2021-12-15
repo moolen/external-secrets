@@ -19,6 +19,9 @@ RUN apk add -U --no-cache \
     libc6-compat \
     openssl
 
+ADD https://github.com/operator-framework/operator-sdk/releases/download/v1.15.0/operator-sdk_linux_amd64 /usr/local/bin/operator-sdk
+RUN chmod +x /usr/local/bin/operator-sdk
+
 COPY --from=builder /go/bin/ginkgo /usr/local/bin/
 COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/
 COPY --from=builder /usr/local/bin/helm /usr/local/bin/
