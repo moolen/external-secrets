@@ -43,7 +43,7 @@ require (
 	github.com/akeylesslabs/akeyless-go-cloud-id v0.3.2
 	github.com/akeylesslabs/akeyless-go/v2 v2.5.11
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1192
-	github.com/aws/aws-sdk-go v1.38.6
+	github.com/aws/aws-sdk-go v1.43.45
 	github.com/crossplane/crossplane-runtime v0.13.0
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/frankban/quicktest v1.10.0 // indirect
@@ -77,7 +77,6 @@ require (
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 	golang.org/x/exp v0.0.0-20200331195152-e8c3332aa8e5 // indirect
 	golang.org/x/oauth2 v0.0.0-20210413134643-5e61552d6c78
-	golang.org/x/sys v0.0.0-20211102061401-a2f17f7b995c // indirect
 	golang.org/x/tools v0.1.7 // indirect
 	google.golang.org/api v0.45.0
 	google.golang.org/genproto v0.0.0-20210413151531-c14fb6ef47c3
