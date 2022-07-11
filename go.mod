@@ -47,13 +47,13 @@ require (
 	github.com/crossplane/crossplane-runtime v0.13.0
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/frankban/quicktest v1.10.0 // indirect
-	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/go-logr/logr v0.4.0
+	github.com/go-logr/logr v1.2.0
 	github.com/golang-jwt/jwt/v4 v4.2.0
 	github.com/google/go-cmp v0.5.5
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/googleapis/gax-go v1.0.3
+	github.com/googleapis/gnostic v0.5.5 // indirect
 	github.com/hashicorp/go-hclog v0.14.1 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.1-vault // indirect
@@ -61,10 +61,10 @@ require (
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/lestrrat-go/jwx v1.2.1
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.16.0
+	github.com/onsi/gomega v1.18.1
 	github.com/oracle/oci-go-sdk/v45 v45.2.0
 	github.com/pierrec/lz4 v2.5.2+incompatible // indirect
-	github.com/prometheus/client_golang v1.11.0
+	github.com/prometheus/client_golang v1.12.1
 	github.com/prometheus/client_model v0.2.0
 	github.com/spf13/cobra v1.1.3 // indirect
 	github.com/stretchr/testify v1.7.0
@@ -73,21 +73,20 @@ require (
 	github.com/yandex-cloud/go-genproto v0.0.0-20210809082946-a97da516c588
 	github.com/yandex-cloud/go-sdk v0.0.0-20210809100642-c13c40a429fa
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a
-	go.uber.org/zap v1.17.0
+	go.uber.org/zap v1.19.1
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 	golang.org/x/exp v0.0.0-20200331195152-e8c3332aa8e5 // indirect
-	golang.org/x/oauth2 v0.0.0-20210413134643-5e61552d6c78
-	golang.org/x/sys v0.0.0-20211102061401-a2f17f7b995c // indirect
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 	golang.org/x/tools v0.1.7 // indirect
 	google.golang.org/api v0.45.0
 	google.golang.org/genproto v0.0.0-20210413151531-c14fb6ef47c3
 	google.golang.org/grpc v1.37.0
 	honnef.co/go/tools v0.1.4 // indirect
-	k8s.io/api v0.21.3
-	k8s.io/apimachinery v0.21.3
-	k8s.io/client-go v0.21.2
-	k8s.io/utils v0.0.0-20210527160623-6fdb442a123b
-	sigs.k8s.io/controller-runtime v0.9.3
+	k8s.io/api v0.24.2
+	k8s.io/apimachinery v0.24.2
+	k8s.io/client-go v0.24.2
+	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9
+	sigs.k8s.io/controller-runtime v0.12.3
 	sigs.k8s.io/controller-tools v0.5.0
 	software.sslmate.com/src/go-pkcs12 v0.0.0-20210415151418-c5206de65a78
 )
