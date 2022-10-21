@@ -51,6 +51,10 @@ We attach SBOM and provenance file to our GitHub release. Also, they are attache
 
 Please create a PR and add your company or project to our [ADOPTERS.md file](ADOPTERS.md) if you are using our project!
 
+## Roadmap
+
+You can find the roadmap in our documentation: https://external-secrets.io/main/contributing/roadmap/
+
 ## Kicked off by
 
 ![](assets/Godaddylogo_2020.png)
