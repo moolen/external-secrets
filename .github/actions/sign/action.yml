@@ -79,7 +79,7 @@ runs:
       with:
         command: generate
         subcommand: container
-        arguments: --repository "${{ inputs.image-name }}" --output-path provenance.att --digest "${{ steps.container_info.outputs.digest }}" --tags "${{ inputs.image-tag }}"
+        arguments: --repository "${{ inputs.image-name }}" --output-path external-secrets.intoto.jsonl --digest "${{ steps.container_info.outputs.digest }}" --tags "${{ inputs.image-tag }}"
       env:
         COSIGN_EXPERIMENTAL: "0"
         GITHUB_TOKEN: "${{ inputs.GITHUB_TOKEN }}"
@@ -89,6 +89,6 @@ runs:
       env:
         COSIGN_EXPERIMENTAL: "1"
       run: |
-        jq '.predicate' provenance.att > provenance-predicate.att
+        jq '.predicate' external-secrets.intoto.jsonl > provenance-predicate.att
         cosign attest --predicate provenance-predicate.att --type slsaprovenance "${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}"
         cosign verify-attestation --type slsaprovenance ${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}
