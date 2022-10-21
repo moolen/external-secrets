@@ -99,9 +99,6 @@ runs:
       env:
         COSIGN_EXPERIMENTAL: "1"
       run: |
-        echo 'provenance<<EOF' >> $GITHUB_ENV
-        cat provenance.intoto.jsonl >> $GITHUB_ENV
-        echo 'EOF' >> $GITHUB_ENV
         jq '.predicate' provenance.intoto.jsonl > provenance-predicate.att
         cosign attest --predicate provenance-predicate.att --type slsaprovenance "${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}"
         cosign verify-attestation --type slsaprovenance ${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}
