@@ -129,17 +129,12 @@ jobs:
           GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: save sbom & provenance as local files
-        run: |
-          echo '${{ steps.sign.outputs.sbom }}' >> sbom${{ matrix.tag_suffix }}.spdx.json
-          echo '${{ steps.sign.outputs.provenance }}' >> provenance${{ matrix.tag_suffix }}.intoto.jsonl
-
       - name: Update Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.event.inputs.version }}
           files: |
-            provenance${{ matrix.tag_suffix }}.intoto.jsonl
-            sbom${{ matrix.tag_suffix }}.spdx.json
+            provenance.${{ env.RELEASE_TAG }}.intoto.jsonl
+            sbom.${{ env.RELEASE_TAG }}.spdx.json
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
