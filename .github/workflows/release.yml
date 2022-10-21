@@ -134,7 +134,7 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.version }}
           files: |
-            external-secrets.intoto.jsonl
-            sbom-spdx.json
+            provenance-${{ env.IMAGE_NAME }}.intoto.jsonl
+            sbom-${{ env.IMAGE_NAME }}.spdx.json
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
