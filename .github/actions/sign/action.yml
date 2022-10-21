@@ -80,7 +80,9 @@ runs:
         COSIGN_EXPERIMENTAL: "1"
       run: |
         syft "${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}" -o spdx-json=sbom.spdx.json
-        echo "sbom=$(cat sbom.spdx.json)" >> $GITHUB_OUTPUT
+        echo 'sbom<<EOF' >> $GITHUB_OUTPUT
+        cat sbom.spdx.json >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
         cosign attest --predicate sbom.spdx.json --type spdx "${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}"
         cosign verify-attestation --type spdx ${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }} | jq '.payload |= @base64d | .payload | fromjson'
 
@@ -100,7 +102,9 @@ runs:
       env:
         COSIGN_EXPERIMENTAL: "1"
       run: |
-        echo "provenance=$(cat provenance.intoto.jsonl)" >> $GITHUB_OUTPUT
+        echo 'provenance<<EOF' >> $GITHUB_OUTPUT
+        cat provenance.intoto.jsonl >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
         jq '.predicate' provenance.intoto.jsonl > provenance-predicate.att
         cosign attest --predicate provenance-predicate.att --type slsaprovenance "${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}"
         cosign verify-attestation --type slsaprovenance ${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}
