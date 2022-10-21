@@ -24,10 +24,10 @@ inputs:
 outputs:
   sbom:
     description: "sbom file contents"
-    value: ${{ steps.sbom.outputs.sbom }}
+    value: ${{ steps.set-output.outputs.sbom }}
   provenance:
     description: "provenance file contents"
-    value: ${{ steps.provenance.outputs.provenance }}
+    value: ${{ steps.set-output.outputs.provenance }}
 
 runs:
   using: "composite"
@@ -80,9 +80,6 @@ runs:
         COSIGN_EXPERIMENTAL: "1"
       run: |
         syft "${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}" -o spdx-json=sbom.spdx.json
-        echo 'sbom<<EOF' >> $GITHUB_OUTPUT
-        cat sbom.spdx.json >> $GITHUB_OUTPUT
-        echo 'EOF' >> $GITHUB_OUTPUT
         cosign attest --predicate sbom.spdx.json --type spdx "${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}"
         cosign verify-attestation --type spdx ${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }} | jq '.payload |= @base64d | .payload | fromjson'
 
@@ -102,9 +99,17 @@ runs:
       env:
         COSIGN_EXPERIMENTAL: "1"
       run: |
-        echo 'provenance<<EOF' >> $GITHUB_OUTPUT
-        cat provenance.intoto.jsonl >> $GITHUB_OUTPUT
-        echo 'EOF' >> $GITHUB_OUTPUT
+        echo 'provenance<<EOF' >> $GITHUB_ENV
+        cat provenance.intoto.jsonl >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
         jq '.predicate' provenance.intoto.jsonl > provenance-predicate.att
         cosign attest --predicate provenance-predicate.att --type slsaprovenance "${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}"
         cosign verify-attestation --type slsaprovenance ${{ inputs.image-name }}@${{ steps.container_info.outputs.digest }}
+
+    - uses: actions/github-script@v6
+      id: set-output
+      with:
+        script: |
+          const fs = require("fs")
+          core.setOutput("sbom", fs.readFileSync("sbom.spdx.json"));
+          core.setOutput("provenance", fs.readFileSync("provenance.intoto.jsonl"));
