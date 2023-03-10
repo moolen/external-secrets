@@ -541,6 +541,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_2_2">
@@ -642,6 +644,20 @@
     <li class="md-nav__item">
       <a href="../clusterexternalsecret/" class="md-nav__link">
         ClusterExternalSecret
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pushsecret/" class="md-nav__link">
+        PushSecret
       </a>
     </li>
   
@@ -1218,6 +1234,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_4">
@@ -1365,7 +1383,7 @@
   
     <li class="md-nav__item">
       <a href="../../provider/gitlab-variables/" class="md-nav__link">
-        Gitlab Project Variables
+        Gitlab Variables
       </a>
     </li>
   
@@ -1464,6 +1482,20 @@
     <li class="md-nav__item">
       <a href="../../provider/doppler/" class="md-nav__link">
         Doppler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../provider/keeper-security/" class="md-nav__link">
+        Keeper Security
       </a>
     </li>
   
@@ -1895,6 +1927,7 @@
 <span class="w">    </span><span class="nt">vault</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://vault.acme.org&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="c1"># Path is the mount path of the Vault KV backend endpoint</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># Used as a path prefix for the external secret key</span><span class="w"></span>
 <span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;secret&quot;</span><span class="w"></span>
 <span class="w">      </span><span class="c1"># Version is the Vault KV secret engine version.</span><span class="w"></span>
 <span class="w">      </span><span class="c1"># This can be either &quot;v1&quot; or &quot;v2&quot;, defaults to &quot;v2&quot;</span><span class="w"></span>
@@ -1908,7 +1941,7 @@
 <span class="w">      </span><span class="nt">caProvider</span><span class="p">:</span><span class="w"></span>
 <span class="w">        </span><span class="c1"># Can be Secret or ConfigMap</span><span class="w"></span>
 <span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Secret&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="c1"># This is mandatory for ClusterSecretStore and not relevant for SecretStore</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># namespace is mandatory for ClusterSecretStore and not relevant for SecretStore</span><span class="w"></span>
 <span class="w">        </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-cert-secret-namespace&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-cert-secret&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cert-key&quot;</span><span class="w"></span>
@@ -1954,6 +1987,7 @@
 <span class="w">            </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret-access-credentials</span><span class="w"></span>
 <span class="w">            </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example</span><span class="w"></span>
 <span class="w">      </span><span class="nt">projectID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myproject</span><span class="w"></span>
+
 <span class="w">    </span><span class="c1"># (3): Kubernetes provider</span><span class="w"></span>
 <span class="w">    </span><span class="nt">kubernetes</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">server</span><span class="p">:</span><span class="w"></span>
@@ -1967,6 +2001,28 @@
 <span class="w">        </span><span class="nt">serviceAccount</span><span class="p">:</span><span class="w"></span>
 <span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;example-sa&quot;</span><span class="w"></span>
 <span class="w">          </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;example&quot;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># (4): Oracle provider</span><span class="w"></span>
+<span class="w">    </span><span class="nt">oracle</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># The vault OCID</span><span class="w"></span>
+<span class="w">      </span><span class="nt">vault</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ocid1.vault.oc1.eu-frankfurt-1.aaa1aaaaaaaaa.aaaaaaaaaaaaaa1aaaaaaa111aaaaaaaaaaaaaaaa</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># The vault region</span><span class="w"></span>
+<span class="w">      </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-frankfurt-1</span><span class="w"></span>
+<span class="w">      </span><span class="nt">auth</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># The user OCID</span><span class="w"></span>
+<span class="w">        </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ocid1.user.oc1..aaa1aaaaaaaaa.aaaaaaaaaaaaaa1aaaaaaa111aaaaaaaaaaaaaaaa</span><span class="w"></span>
+<span class="w">        </span><span class="c1"># The tenancy OCID</span><span class="w"></span>
+<span class="w">        </span><span class="nt">tenancy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ocid1.tenancy.oc1..aaa1aaaaaaaaa.aaaaaaaaaaaaaa1aaaaaaa111aaaaaaaaaaaaaaaa</span><span class="w"></span>
+<span class="w">        </span><span class="nt">secretRef</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">privatekey</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="c1"># The secret that contains your privatekey</span><span class="w"></span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci-secret-name</span><span class="w"></span>
+<span class="w">            </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">privateKey</span><span class="w"></span>
+<span class="w">          </span><span class="nt">fingerprint</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="c1"># The secret that contains your fingerprint</span><span class="w"></span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">oci-secret-name</span><span class="w"></span>
+<span class="w">            </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fingerprint</span><span class="w"></span>
+
 <span class="w">    </span><span class="c1"># (TODO): add more provider examples here</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1"># Conditions about namespaces in which the ClusterSecretStore is usable for ExternalSecrets</span><span class="w"></span>

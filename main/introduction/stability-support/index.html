@@ -612,6 +612,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_2_2">
@@ -676,6 +678,20 @@
     <li class="md-nav__item">
       <a href="../../api/clusterexternalsecret/" class="md-nav__link">
         ClusterExternalSecret
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/pushsecret/" class="md-nav__link">
+        PushSecret
       </a>
     </li>
   
@@ -1252,6 +1268,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_4">
@@ -1399,7 +1417,7 @@
   
     <li class="md-nav__item">
       <a href="../../provider/gitlab-variables/" class="md-nav__link">
-        Gitlab Project Variables
+        Gitlab Variables
       </a>
     </li>
   
@@ -1498,6 +1516,20 @@
     <li class="md-nav__item">
       <a href="../../provider/doppler/" class="md-nav__link">
         Doppler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../provider/keeper-security/" class="md-nav__link">
+        Keeper Security
       </a>
     </li>
   
@@ -1930,6 +1962,10 @@
 </thead>
 <tbody>
 <tr>
+<td>0.7.x</td>
+<td>1.19 → 1.26</td>
+</tr>
+<tr>
 <td>0.6.x</td>
 <td>1.19 → 1.24</td>
 </tr>
@@ -1999,7 +2035,7 @@
 <td align="right"><a href="https://github.com/AndreyZamyslov">@AndreyZamyslov</a> <a href="https://github.com/knelasevero">@knelasevero</a></td>
 </tr>
 <tr>
-<td><a href="https://external-secrets.io/latest/provider/gitlab-project-variables/">Gitlab Project Variables</a></td>
+<td><a href="https://external-secrets.io/latest/provider/gitlab-variables/">Gitlab Variables</a></td>
 <td align="center">alpha</td>
 <td align="right"><a href="https://github.com/Jabray5">@Jabray5</a></td>
 </tr>
@@ -2052,6 +2088,7 @@
 <th align="center">referent authentication</th>
 <th align="center">store validation</th>
 <th align="center">push secret</th>
+<th align="center">DeletionPolicy Merge/Delete</th>
 </tr>
 </thead>
 <tbody>
@@ -2060,36 +2097,40 @@
 <td align="center">x</td>
 <td align="center">x</td>
 <td align="center"></td>
-<td align="center"></td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">x</td>
 </tr>
 <tr>
 <td>AWS Parameter Store</td>
 <td align="center">x</td>
 <td align="center">x</td>
 <td align="center"></td>
-<td align="center"></td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">x</td>
 </tr>
 <tr>
 <td>Hashicorp Vault</td>
 <td align="center">x</td>
 <td align="center">x</td>
 <td align="center"></td>
-<td align="center"></td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">x</td>
 </tr>
 <tr>
 <td>GCP Secret Manager</td>
 <td align="center">x</td>
 <td align="center">x</td>
 <td align="center"></td>
-<td align="center"></td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">x</td>
 </tr>
 <tr>
 <td>Azure Keyvault</td>
@@ -2098,7 +2139,8 @@
 <td align="center">x</td>
 <td align="center">x</td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
 </tr>
 <tr>
 <td>Kubernetes</td>
@@ -2107,7 +2149,8 @@
 <td align="center"></td>
 <td align="center">x</td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
 </tr>
 <tr>
 <td>IBM Cloud Secrets Manager</td>
@@ -2116,6 +2159,7 @@
 <td align="center"></td>
 <td align="center"></td>
 <td align="center">x</td>
+<td align="center"></td>
 <td align="center"></td>
 </tr>
 <tr>
@@ -2126,14 +2170,16 @@
 <td align="center"></td>
 <td align="center">x</td>
 <td align="center"></td>
+<td align="center"></td>
 </tr>
 <tr>
-<td>Gitlab Project Variables</td>
-<td align="center"></td>
-<td align="center"></td>
+<td>Gitlab Variables</td>
+<td align="center">x</td>
+<td align="center">x</td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center">x</td>
+<td align="center"></td>
 <td align="center"></td>
 </tr>
 <tr>
@@ -2144,6 +2190,7 @@
 <td align="center"></td>
 <td align="center">x</td>
 <td align="center"></td>
+<td align="center"></td>
 </tr>
 <tr>
 <td>Oracle Vault</td>
@@ -2153,14 +2200,16 @@
 <td align="center"></td>
 <td align="center">x</td>
 <td align="center"></td>
+<td align="center"></td>
 </tr>
 <tr>
 <td>Akeyless</td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
 <td align="center"></td>
 <td align="center"></td>
 <td align="center">x</td>
+<td align="center"></td>
 <td align="center"></td>
 </tr>
 <tr>
@@ -2171,6 +2220,7 @@
 <td align="center"></td>
 <td align="center">x</td>
 <td align="center"></td>
+<td align="center"></td>
 </tr>
 <tr>
 <td>Generic Webhook</td>
@@ -2180,6 +2230,7 @@
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"></td>
+<td align="center">x</td>
 </tr>
 <tr>
 <td>senhasegura DSM</td>
@@ -2189,6 +2240,7 @@
 <td align="center"></td>
 <td align="center">x</td>
 <td align="center"></td>
+<td align="center"></td>
 </tr>
 <tr>
 <td>Doppler</td>
@@ -2197,6 +2249,7 @@
 <td align="center"></td>
 <td align="center"></td>
 <td align="center">x</td>
+<td align="center"></td>
 <td align="center"></td>
 </tr>
 </tbody>

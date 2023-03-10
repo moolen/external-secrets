@@ -537,6 +537,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_2_2">
@@ -601,6 +603,20 @@
     <li class="md-nav__item">
       <a href="../../api/clusterexternalsecret/" class="md-nav__link">
         ClusterExternalSecret
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/pushsecret/" class="md-nav__link">
+        PushSecret
       </a>
     </li>
   
@@ -1179,6 +1195,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_4">
@@ -1410,6 +1428,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pushsecret" class="md-nav__link">
+    PushSecret
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#vault-enterprise" class="md-nav__link">
     Vault Enterprise
   </a>
@@ -1499,7 +1524,7 @@
   
     <li class="md-nav__item">
       <a href="../gitlab-variables/" class="md-nav__link">
-        Gitlab Project Variables
+        Gitlab Variables
       </a>
     </li>
   
@@ -1598,6 +1623,20 @@
     <li class="md-nav__item">
       <a href="../doppler/" class="md-nav__link">
         Doppler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../keeper-security/" class="md-nav__link">
+        Keeper Security
       </a>
     </li>
   
@@ -2054,6 +2093,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pushsecret" class="md-nav__link">
+    PushSecret
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#vault-enterprise" class="md-nav__link">
     Vault Enterprise
   </a>
@@ -2174,7 +2220,7 @@ management. Vault itself implements lots of different secret engines, as of now 
 <span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foobar</span><span class="w"></span>
 <span class="w">    </span><span class="nt">remoteRef</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret/foo</span><span class="w"></span>
+<span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="w"></span>
 <span class="w">      </span><span class="nt">property</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-value</span><span class="w"></span>
 <span class="nn">---</span><span class="w"></span>
 <span class="c1"># will create a secret with:</span><span class="w"></span>
@@ -2378,7 +2424,7 @@ trade-offs. Depending on the authentication method you need to adapt your enviro
 <strong>NOTE:</strong> In case of a <code>ClusterSecretStore</code>, Be sure to provide <code>namespace</code> in <code>secretRef</code> with the namespace where the secret resides.</p>
 <h4 id="kubernetes-authentication">Kubernetes authentication</h4>
 <p><a href="https://www.vaultproject.io/docs/auth/kubernetes">Kubernetes-native authentication</a> has three
-options of optaining credentials for vault:</p>
+options of obtaining credentials for vault:</p>
 <ol>
 <li>by using a service account jwt referenced in <code>serviceAccountRef</code></li>
 <li>by using the jwt from a <code>Kind=Secret</code> referenced by the <code>secretRef</code></li>
@@ -2486,6 +2532,37 @@ or <code>Kind=ClusterSecretStore</code> resource.</p>
 <span class="w">            </span><span class="nt">expirationSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span><span class="w"></span>
 </code></pre></div>
 <strong>NOTE:</strong> In case of a <code>ClusterSecretStore</code>, Be sure to provide <code>namespace</code> in <code>secretRef</code> with the namespace where the secret resides.</p>
+<h3 id="pushsecret">PushSecret</h3>
+<p>Vault supports PushSecret features which allow you to sync a given kubernetes secret key into a hashicorp vault secret. In order to do so, it is expected that the secret key is a valid JSON object.</p>
+<p>In order to use PushSecret, you need to give <code>create</code>, <code>read</code> and <code>update</code> permissions to the path where you want to push secrets to. Use it with care!</p>
+<p>Here is an example on how to set it up:
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-secret</span><span class="w"></span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="nt">stringData</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">source-key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{\&quot;foo\&quot;:\&quot;bar\&quot;}&quot;</span><span class="w"> </span><span class="c1"># Needs to be a JSON</span><span class="w"></span>
+<span class="nn">---</span><span class="w"></span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PushSecret</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pushsecret-example</span><span class="w"></span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">refreshInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span><span class="w"> </span><span class="c1"># Refresh interval for which push secret will reconcile</span><span class="w"></span>
+<span class="w">  </span><span class="nt">secretStoreRefs</span><span class="p">:</span><span class="w"> </span><span class="c1"># A list of secret stores to push secrets to</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vault-secretstore</span><span class="w"></span>
+<span class="w">      </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SecretStore</span><span class="w"></span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-secret</span><span class="w"> </span><span class="c1"># Source Kubernetes secret to be pushed</span><span class="w"></span>
+<span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">match</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-key</span><span class="w"> </span><span class="c1"># Source Kubernetes secret key containing the vault secret (in JSON format)</span><span class="w"></span>
+<span class="w">        </span><span class="nt">remoteRef</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">remoteKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vault/secret</span><span class="w"> </span><span class="c1"># path to vault secret. This path is appended with the vault-store path.</span><span class="w"></span>
+</code></pre></div></p>
 <h3 id="vault-enterprise">Vault Enterprise</h3>
 <h4 id="eventual-consistency-and-performance-standby-nodes">Eventual Consistency and Performance Standby Nodes</h4>
 <p>When using Vault Enterprise with <a href="https://www.vaultproject.io/docs/enterprise/consistency#performance-standby-nodes">performance standby nodes</a>,

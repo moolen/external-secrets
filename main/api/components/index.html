@@ -582,6 +582,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_2_2">
@@ -646,6 +648,20 @@
     <li class="md-nav__item">
       <a href="../clusterexternalsecret/" class="md-nav__link">
         ClusterExternalSecret
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pushsecret/" class="md-nav__link">
+        PushSecret
       </a>
     </li>
   
@@ -1222,6 +1238,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_4">
@@ -1369,7 +1387,7 @@
   
     <li class="md-nav__item">
       <a href="../../provider/gitlab-variables/" class="md-nav__link">
-        Gitlab Project Variables
+        Gitlab Variables
       </a>
     </li>
   
@@ -1468,6 +1486,20 @@
     <li class="md-nav__item">
       <a href="../../provider/doppler/" class="md-nav__link">
         Doppler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../provider/keeper-security/" class="md-nav__link">
+        Keeper Security
       </a>
     </li>
   
@@ -1859,7 +1891,7 @@
 <p>Exernal Secrets comes with three components: <code>Core Controller</code>, <code>Webhook</code> and <code>Cert Controller</code>.</p>
 <p>This is due to the need to implement conversion webhooks in order to convert custom resources between api versions and
 to provide a ValidatingWebhook for the <code>ExternalSecret</code> and <code>SecretStore</code> resources.</p>
-<p>These features are optional but highly recommended. You can disable them with hem chart values <code>certController.create=false</code> and <code>webhook.create=false</code>.</p>
+<p>These features are optional but highly recommended. You can disable them with helm chart values <code>certController.create=false</code> and <code>webhook.create=false</code>.</p>
 <p><br/>
 <img alt="Component Overview" src="../../pictures/diagrams-component-overview.png" /></p>
 

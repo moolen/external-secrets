@@ -537,6 +537,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_2_2">
@@ -601,6 +603,20 @@
     <li class="md-nav__item">
       <a href="../../api/clusterexternalsecret/" class="md-nav__link">
         ClusterExternalSecret
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/pushsecret/" class="md-nav__link">
+        PushSecret
       </a>
     </li>
   
@@ -1177,6 +1193,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_4">
@@ -1324,7 +1342,7 @@
   
     <li class="md-nav__item">
       <a href="../../provider/gitlab-variables/" class="md-nav__link">
-        Gitlab Project Variables
+        Gitlab Variables
       </a>
     </li>
   
@@ -1423,6 +1441,20 @@
     <li class="md-nav__item">
       <a href="../../provider/doppler/" class="md-nav__link">
         Doppler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../provider/keeper-security/" class="md-nav__link">
+        Keeper Security
       </a>
     </li>
   
@@ -2057,7 +2089,7 @@ run managed tests.</p>
 <div class="highlight"><pre><span></span><code>make test.e2e GINKGO_LABELS=&#39;gcp&amp;&amp;!managed&#39;
 </code></pre></div>
 <h4 id="managed-kubernetes-e2e-tests">Managed Kubernetes e2e tests</h4>
-<p>There's another suite of e2e tests that integrate with managed Kuberentes offerings.
+<p>There's another suite of e2e tests that integrate with managed Kubernetes offerings.
 They create real infrastructure at a cloud provider and deploy the controller
 into that environment.
 This is necessary to test the authentication integration
