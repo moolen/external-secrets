@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#external-secrets-operator" class="md-skip">
+        <a href="#supported-versions" class="md-skip">
           Skip to content
         </a>
       
@@ -469,8 +469,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#external-secrets-operator" class="md-nav__link">
-    External Secrets Operator
+  <a href="#supported-versions" class="md-nav__link">
+    Supported Versions
   </a>
   
 </li>
@@ -733,6 +733,8 @@
         
           
         
+          
+        
       
       
         
@@ -791,6 +793,20 @@
     <li class="md-nav__item">
       <a href="../../api/generator/gcr/" class="md-nav__link">
         Google Container Registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/generator/vault/" class="md-nav__link">
+        Vault Dynamic Secret
       </a>
     </li>
   
@@ -936,6 +952,8 @@
       
       
       
+        
+          
         
           
         
@@ -1212,6 +1230,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/disable-cluster-features/" class="md-nav__link">
+        Disable Cluster Features
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1233,6 +1265,8 @@
       
       
       
+        
+          
         
           
         
@@ -1536,6 +1570,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../provider/scaleway/" class="md-nav__link">
+        Scaleway
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1557,6 +1605,8 @@
       
       
       
+        
+          
         
           
         
@@ -1614,6 +1664,20 @@
     <li class="md-nav__item">
       <a href="../../examples/jenkins-kubernetes-credentials/" class="md-nav__link">
         Jenkins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/bitwarden/" class="md-nav__link">
+        BitWarden
       </a>
     </li>
   
@@ -1891,8 +1955,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#external-secrets-operator" class="md-nav__link">
-    External Secrets Operator
+  <a href="#supported-versions" class="md-nav__link">
+    Supported Versions
   </a>
   
 </li>
@@ -1951,35 +2015,61 @@
   <h1>Stability and Support</h1>
 
 <p>This page lists the status, timeline and policy for currently supported ESO releases and its providers. Please also see our <a href="../deprecation-policy/">deprecation policy</a> that describes API versioning, deprecation and API surface.</p>
-<h2 id="external-secrets-operator">External Secrets Operator</h2>
-<p>We are currently in beta and support <strong>only the latest release</strong> for the time being.</p>
+<h2 id="supported-versions">Supported Versions</h2>
+<p>We want to provide security patches and critical bug fixes in a timely manner to our users.
+To do so, we offer long-term support for our latest two (N, N-1) software releases.
+We aim for a 2-3 month minor release cycle, i.e. a given release is supported for about 4-6 months.</p>
+<p>We want to cover the following cases:</p>
+<ul>
+<li>regular image rebuilds to update OS dependencies</li>
+<li>regular go dependency updates</li>
+<li>backport bug fixes on demand</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>ESO Version</th>
 <th>Kubernetes Version</th>
+<th>Release Date</th>
+<th>End of Life</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>0.8.x</td>
+<td>1.19 → 1.26</td>
+<td>Mar 16, 2023</td>
+<td>Release of 1.0</td>
+</tr>
+<tr>
 <td>0.7.x</td>
 <td>1.19 → 1.26</td>
+<td>Dec 11, 2022</td>
+<td>Mar 16, 2023</td>
 </tr>
 <tr>
 <td>0.6.x</td>
 <td>1.19 → 1.24</td>
+<td>Oct 9, 2022</td>
+<td>Mar 16, 2023</td>
 </tr>
 <tr>
 <td>0.5.x</td>
 <td>1.19 → 1.24</td>
+<td>Apr 6, 2022</td>
+<td>Dec 11, 2022</td>
 </tr>
 <tr>
 <td>0.4.x</td>
 <td>1.16 → 1.24</td>
+<td>Feb 2, 2022</td>
+<td>Oct 9, 2022</td>
 </tr>
 <tr>
 <td>0.3.x</td>
 <td>1.16 → 1.24</td>
+<td>Jul 25, 2021</td>
+<td>Apr 6, 2022</td>
 </tr>
 </tbody>
 </table>
@@ -2026,7 +2116,7 @@
 </tr>
 <tr>
 <td><a href="https://external-secrets.io/latest/provider/kubernetes">Kubernetes</a></td>
-<td align="center">alpha</td>
+<td align="center">beta</td>
 <td align="right"><a href="https://github.com/external-secrets">external-secrets</a></td>
 </tr>
 <tr>
@@ -2074,6 +2164,16 @@
 <td align="center">alpha</td>
 <td align="right"><a href="https://github.com/ryan-blunden/">@ryan-blunden</a> <a href="https://github.com/nmanoogian/">@nmanoogian</a></td>
 </tr>
+<tr>
+<td><a href="https://www.keepersecurity.com/">Keeper Security</a></td>
+<td align="center">alpha</td>
+<td align="right"><a href="https://github.com/ppodevlab">@ppodevlab</a></td>
+</tr>
+<tr>
+<td><a href="https://external-secrets.io/latest/provider/scaleway">Scaleway</a></td>
+<td align="center">alpha</td>
+<td align="right"><a href="https://github.com/azert9/">@azert9</a></td>
+</tr>
 </tbody>
 </table>
 <h2 id="provider-feature-support">Provider Feature Support</h2>
@@ -2096,7 +2196,7 @@
 <td>AWS Secrets Manager</td>
 <td align="center">x</td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
 <td align="center">x</td>
 <td align="center">x</td>
 <td align="center">x</td>
@@ -2106,7 +2206,7 @@
 <td>AWS Parameter Store</td>
 <td align="center">x</td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
 <td align="center">x</td>
 <td align="center">x</td>
 <td align="center">x</td>
@@ -2116,7 +2216,7 @@
 <td>Hashicorp Vault</td>
 <td align="center">x</td>
 <td align="center">x</td>
-<td align="center"></td>
+<td align="center">x</td>
 <td align="center">x</td>
 <td align="center">x</td>
 <td align="center">x</td>
@@ -2146,10 +2246,10 @@
 <td>Kubernetes</td>
 <td align="center">x</td>
 <td align="center">x</td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">x</td>
 <td align="center"></td>
-<td align="center">x</td>
-<td align="center">x</td>
-<td align="center">x</td>
 <td align="center">x</td>
 </tr>
 <tr>
@@ -2252,6 +2352,26 @@
 <td align="center"></td>
 <td align="center"></td>
 </tr>
+<tr>
+<td>Keeper Security</td>
+<td align="center">x</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td>Scaleway</td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">x</td>
+<td align="center">x</td>
+<td align="center">x</td>
+</tr>
 </tbody>
 </table>
 <h2 id="support-policy">Support Policy</h2>
@@ -2315,8 +2435,8 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2022 The external-secrets Authors.<br/>
-&copy; 2022 The Linux Foundation. All rights reserved.<br/><br/>
+      &copy; 2023 The external-secrets Authors.<br/>
+&copy; 2023 The Linux Foundation. All rights reserved.<br/><br/>
 The Linux Foundation has registered trademarks and uses trademarks.<br/>
 For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/">Trademark Usage page</a>.
 

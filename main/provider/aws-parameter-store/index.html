@@ -658,6 +658,8 @@
         
           
         
+          
+        
       
       
         
@@ -716,6 +718,20 @@
     <li class="md-nav__item">
       <a href="../../api/generator/gcr/" class="md-nav__link">
         Google Container Registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/generator/vault/" class="md-nav__link">
+        Vault Dynamic Secret
       </a>
     </li>
   
@@ -861,6 +877,8 @@
       
       
       
+        
+          
         
           
         
@@ -1137,6 +1155,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/disable-cluster-features/" class="md-nav__link">
+        Disable Cluster Features
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1160,6 +1192,8 @@
       
       
       
+        
+          
         
           
         
@@ -1608,6 +1642,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scaleway/" class="md-nav__link">
+        Scaleway
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1629,6 +1677,8 @@
       
       
       
+        
+          
         
           
         
@@ -1686,6 +1736,20 @@
     <li class="md-nav__item">
       <a href="../../examples/jenkins-kubernetes-credentials/" class="md-nav__link">
         Jenkins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/bitwarden/" class="md-nav__link">
+        BitWarden
       </a>
     </li>
   
@@ -2173,6 +2237,19 @@ Please estimate your costs before using ESO. Cost depends on the RefreshInterval
 <span class="w">    </span><span class="nt">remoteRef</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">friendslist</span><span class="w"></span>
 <span class="w">      </span><span class="nt">property</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">friends.1.first</span><span class="w"> </span><span class="c1"># Roger</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1"># metadataPolicy to fetch all the tags in JSON format</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tags</span><span class="w"></span>
+<span class="w">    </span><span class="nt">remoteRef</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">metadataPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fetch</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">database-credentials</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1"># metadataPolicy to fetch a specific tag (dev) from the source secret</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">developer</span><span class="w"></span>
+<span class="w">    </span><span class="nt">remoteRef</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">metadataPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Fetch</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">database-credentials</span><span class="w"></span>
+<span class="w">      </span><span class="nt">property</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span><span class="w"></span>
 </code></pre></div></p>
 <h3 id="parameter-versions">Parameter Versions</h3>
 <p>ParameterStore creates a new version of a parameter every time it is updated with a new value. The parameter can be referenced via the <code>version</code> property</p>
@@ -2368,8 +2445,8 @@ You must have <a href="https://kubernetes.io/docs/tasks/configure-pod-container/
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2022 The external-secrets Authors.<br/>
-&copy; 2022 The Linux Foundation. All rights reserved.<br/><br/>
+      &copy; 2023 The external-secrets Authors.<br/>
+&copy; 2023 The Linux Foundation. All rights reserved.<br/><br/>
 The Linux Foundation has registered trademarks and uses trademarks.<br/>
 For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/">Trademark Usage page</a>.
 

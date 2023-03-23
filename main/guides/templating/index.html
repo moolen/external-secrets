@@ -658,6 +658,8 @@
         
           
         
+          
+        
       
       
         
@@ -716,6 +718,20 @@
     <li class="md-nav__item">
       <a href="../../api/generator/gcr/" class="md-nav__link">
         Google Container Registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/generator/vault/" class="md-nav__link">
+        Vault Dynamic Secret
       </a>
     </li>
   
@@ -890,6 +906,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_3">
@@ -998,6 +1016,13 @@
   
     <nav class="md-nav" aria-label="Examples">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mergepolicy" class="md-nav__link">
+    MergePolicy
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#templatefrom" class="md-nav__link">
@@ -1243,6 +1268,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../disable-cluster-features/" class="md-nav__link">
+        Disable Cluster Features
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1264,6 +1303,8 @@
       
       
       
+        
+          
         
           
         
@@ -1567,6 +1608,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../provider/scaleway/" class="md-nav__link">
+        Scaleway
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1588,6 +1643,8 @@
       
       
       
+        
+          
         
           
         
@@ -1645,6 +1702,20 @@
     <li class="md-nav__item">
       <a href="../../examples/jenkins-kubernetes-credentials/" class="md-nav__link">
         Jenkins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/bitwarden/" class="md-nav__link">
+        BitWarden
       </a>
     </li>
   
@@ -1930,6 +2001,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#mergepolicy" class="md-nav__link">
+    MergePolicy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#templatefrom" class="md-nav__link">
     TemplateFrom
   </a>
@@ -2063,6 +2141,29 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysecret</span><span class="w"></span>
 <span class="w">    </span><span class="nt">remoteRef</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/credentials</span><span class="w"></span>
+</code></pre></div>
+<h3 id="mergepolicy">MergePolicy</h3>
+<p>By default, the templating mechanism will not use any information available from the original <code>data</code> and <code>dataFrom</code> queries to the provider, and only keep the templated information. It is possible to change this behavior through the use of the <code>mergePolicy</code> field. <code>mergePolicy</code> currently accepts two values: <code>Replace</code> (the default) and <code>Merge</code>. When using <code>Merge</code>, <code>data</code> and <code>dataFrom</code> keys will also be embedded into the templated secret, having lower priority than the template outcome. See the example for more information:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1beta1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExternalSecret</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">template</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># ...</span><span class="w"></span>
+<span class="w">  </span><span class="nt">target</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">template</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">mergePolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Merge</span><span class="w"></span>
+<span class="w">      </span><span class="nt">engineVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v2</span><span class="w"></span>
+<span class="w">      </span><span class="nt">data</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span><span class="w"></span>
+<span class="w">        </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{{</span><span class="nv"> </span><span class="s">.password</span><span class="nv"> </span><span class="s">|</span><span class="nv"> </span><span class="s">b64dec</span><span class="nv"> </span><span class="s">}}&quot;</span><span class="w"> </span><span class="c1"># Overwrites the password from the data call and use this output</span><span class="w"></span>
+<span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">password</span><span class="w"></span>
+<span class="w">    </span><span class="nt">remoteRef</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/credentials/password</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">username</span><span class="w"> </span><span class="c1"># Preserves the username in the templated Secret</span><span class="w"></span>
+<span class="w">    </span><span class="nt">remoteRef</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/credentials/username</span><span class="w"></span>
 </code></pre></div>
 <h3 id="templatefrom">TemplateFrom</h3>
 <p>You do not have to define your templates inline in an ExternalSecret but you can pull <code>ConfigMaps</code> or other Secrets that contain a template. Consider the following example:</p>
@@ -2370,8 +2471,8 @@ NtFUGA95RGN9s+pl6XY0YARPHf5O76ErC1OZtDTR5RdyQfcM+94gYZsexsXl0aQO
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2022 The external-secrets Authors.<br/>
-&copy; 2022 The Linux Foundation. All rights reserved.<br/><br/>
+      &copy; 2023 The external-secrets Authors.<br/>
+&copy; 2023 The Linux Foundation. All rights reserved.<br/><br/>
 The Linux Foundation has registered trademarks and uses trademarks.<br/>
 For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/">Trademark Usage page</a>.
 
