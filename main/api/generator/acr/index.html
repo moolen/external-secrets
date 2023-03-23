@@ -662,8 +662,6 @@
         
           
         
-          
-        
       
       
         
@@ -780,20 +778,6 @@
     <li class="md-nav__item">
       <a href="../gcr/" class="md-nav__link">
         Google Container Registry
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../vault/" class="md-nav__link">
-        Vault Dynamic Secret
       </a>
     </li>
   
@@ -939,8 +923,6 @@
       
       
       
-        
-          
         
           
         
@@ -1217,20 +1199,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../guides/disable-cluster-features/" class="md-nav__link">
-        Disable Cluster Features
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -1252,10 +1220,6 @@
       
       
       
-        
-          
-        
-          
         
           
         
@@ -1543,34 +1507,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../provider/keeper-security/" class="md-nav__link">
-        Keeper Security
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../provider/scaleway/" class="md-nav__link">
-        Scaleway
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -1592,8 +1528,6 @@
       
       
       
-        
-          
         
           
         
@@ -1651,20 +1585,6 @@
     <li class="md-nav__item">
       <a href="../../../examples/jenkins-kubernetes-credentials/" class="md-nav__link">
         Jenkins
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../examples/bitwarden/" class="md-nav__link">
-        BitWarden
       </a>
     </li>
   
@@ -2070,34 +1990,6 @@ repository:my-repository:pull
 <span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-service-account&quot;</span><span class="w"></span>
 <span class="w">        </span><span class="nt">audiences</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w"></span>
 </code></pre></div>
-<p>Example ExternalSecret that references the ACR generator:
-<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1beta1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExternalSecret</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azurecr-credentials</span><span class="w"></span>
-<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">dataFrom</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sourceRef</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">generatorRef</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">generators.external-secrets.io/v1alpha1</span><span class="w"></span>
-<span class="w">          </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ACRAccessToken</span><span class="w"></span>
-<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myregistry.azurecr.io</span><span class="w"></span>
-<span class="w">  </span><span class="nt">refreshInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12h</span><span class="w"></span>
-<span class="w">  </span><span class="nt">target</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">azurecr-credentials</span><span class="w"></span>
-<span class="w">    </span><span class="nt">template</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/dockerconfigjson</span><span class="w"></span>
-<span class="w">      </span><span class="nt">data</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">.dockerconfigjson</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
-<span class="w">          </span><span class="no">{</span><span class="w"></span>
-<span class="w">            </span><span class="no">&quot;auths&quot;: {</span><span class="w"></span>
-<span class="w">              </span><span class="no">&quot;myregistry.azurecr.io&quot;: {</span><span class="w"></span>
-<span class="w">                </span><span class="no">&quot;username&quot;: &quot;{{ .username }}&quot;,</span><span class="w"></span>
-<span class="w">                </span><span class="no">&quot;identitytoken&quot;: &quot;{{ .password }}&quot;,</span><span class="w"></span>
-<span class="w">              </span><span class="no">}</span><span class="w"></span>
-<span class="w">            </span><span class="no">}</span><span class="w"></span>
-<span class="w">          </span><span class="no">}</span><span class="w"></span>
-</code></pre></div></p>
 
               
             </article>
@@ -2148,8 +2040,8 @@ repository:my-repository:pull
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2023 The external-secrets Authors.<br/>
-&copy; 2023 The Linux Foundation. All rights reserved.<br/><br/>
+      &copy; 2022 The external-secrets Authors.<br/>
+&copy; 2022 The Linux Foundation. All rights reserved.<br/><br/>
 The Linux Foundation has registered trademarks and uses trademarks.<br/>
 For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/">Trademark Usage page</a>.
 

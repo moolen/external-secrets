@@ -658,8 +658,6 @@
         
           
         
-          
-        
       
       
         
@@ -718,20 +716,6 @@
     <li class="md-nav__item">
       <a href="../../api/generator/gcr/" class="md-nav__link">
         Google Container Registry
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/generator/vault/" class="md-nav__link">
-        Vault Dynamic Secret
       </a>
     </li>
   
@@ -877,8 +861,6 @@
       
       
       
-        
-          
         
           
         
@@ -1155,20 +1137,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/disable-cluster-features/" class="md-nav__link">
-        Disable Cluster Features
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -1192,10 +1160,6 @@
       
       
       
-        
-          
-        
-          
         
           
         
@@ -1635,34 +1599,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../keeper-security/" class="md-nav__link">
-        Keeper Security
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../scaleway/" class="md-nav__link">
-        Scaleway
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -1684,8 +1620,6 @@
       
       
       
-        
-          
         
           
         
@@ -1743,20 +1677,6 @@
     <li class="md-nav__item">
       <a href="../../examples/jenkins-kubernetes-credentials/" class="md-nav__link">
         Jenkins
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/bitwarden/" class="md-nav__link">
-        BitWarden
       </a>
     </li>
   
@@ -2197,7 +2117,7 @@ az keyvault set-policy --name kv-name-with-certs --object-id <span class="s2">&q
 <p>A service Principal client and Secret is created and the JSON keyfile is stored in a <code>Kind=Secret</code>. The <code>ClientID</code> and <code>ClientSecret</code> should be configured for the secret. This service principal should have proper access rights to the keyvault to be managed by the operator</p>
 <h4 id="managed-identity-authentication">Managed Identity authentication</h4>
 <p>A Managed Identity should be created in Azure, and that Identity should have proper rights to the keyvault to be managed by the operator.</p>
-<p>If there are multiple Managed Identities for different keyvaults, the operator should have been assigned all identities via <a href="https://azure.github.io/aad-pod-identity/docs/">aad-pod-identity</a>, then the SecretStore configuration should include the Id of the identity to be used via the <code>identityId</code> field.</p>
+<p>If there are multiple Managed Identitites for different keyvaults, the operator should have been assigned all identities via <a href="https://azure.github.io/aad-pod-identity/docs/">aad-pod-identity</a>, then the SecretStore configuration should include the Id of the idenetity to be used via the <code>identityId</code> field.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1beta1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SecretStore</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -2301,7 +2221,7 @@ az keyvault set-policy --name kv-name-with-certs --object-id <span class="s2">&q
 <span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClientSecret</span><span class="w"></span>
 </code></pre></div>
 <strong>NOTE:</strong> In case of a <code>ClusterSecretStore</code>, Be sure to provide <code>namespace</code> in <code>clientId</code> and <code>clientSecret</code>  with the namespaces where the secrets reside.</p>
-<p>Or in case of Managed Identity authentication:</p>
+<p>Or in case of Managed Idenetity authentication:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1beta1</span><span class="w"></span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SecretStore</span><span class="w"></span>
 <span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
@@ -2394,7 +2314,7 @@ az keyvault set-policy --name kv-name-with-certs --object-id <span class="s2">&q
 <span class="w">      </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">key/encryption-pubkey</span><span class="w"></span>
 </code></pre></div>
 <p>The operator will fetch the Azure Key vault secret and inject it as a <code>Kind=Secret</code>. Then the Kubernetes secret can be fetched by issuing:</p>
-<div class="highlight"><pre><span></span><code>kubectl get secret secret-to-be-created -n &lt;namespace&gt; -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.dev-secret-test}&#39;</span> <span class="p">|</span> base64 -d
+<div class="highlight"><pre><span></span><code>kubectl get secret secret-to-be-created -n &lt;namespace&gt; <span class="p">|</span> -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.dev-secret-test}&#39;</span> <span class="p">|</span> base64 -d
 </code></pre></div>
 <p>To select all secrets inside the key vault or all tags inside a secret, you can use the <code>dataFrom</code> directive:</p>
 <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1beta1</span><span class="w"></span>
@@ -2614,8 +2534,8 @@ az keyvault set-policy --name kv-name-with-certs --object-id <span class="s2">&q
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2023 The external-secrets Authors.<br/>
-&copy; 2023 The Linux Foundation. All rights reserved.<br/><br/>
+      &copy; 2022 The external-secrets Authors.<br/>
+&copy; 2022 The Linux Foundation. All rights reserved.<br/><br/>
 The Linux Foundation has registered trademarks and uses trademarks.<br/>
 For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/">Trademark Usage page</a>.
 

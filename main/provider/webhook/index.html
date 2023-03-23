@@ -658,8 +658,6 @@
         
           
         
-          
-        
       
       
         
@@ -718,20 +716,6 @@
     <li class="md-nav__item">
       <a href="../../api/generator/gcr/" class="md-nav__link">
         Google Container Registry
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/generator/vault/" class="md-nav__link">
-        Vault Dynamic Secret
       </a>
     </li>
   
@@ -877,8 +861,6 @@
       
       
       
-        
-          
         
           
         
@@ -1155,20 +1137,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/disable-cluster-features/" class="md-nav__link">
-        Disable Cluster Features
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -1192,10 +1160,6 @@
       
       
       
-        
-          
-        
-          
         
           
         
@@ -1560,34 +1524,6 @@
 
             
           
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../keeper-security/" class="md-nav__link">
-        Keeper Security
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../scaleway/" class="md-nav__link">
-        Scaleway
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -1609,8 +1545,6 @@
       
       
       
-        
-          
         
           
         
@@ -1668,20 +1602,6 @@
     <li class="md-nav__item">
       <a href="../../examples/jenkins-kubernetes-credentials/" class="md-nav__link">
         Jenkins
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/bitwarden/" class="md-nav__link">
-        BitWarden
       </a>
     </li>
   
@@ -2080,10 +2000,6 @@
 </code></pre></div>
 <h4 id="limitations">Limitations</h4>
 <p>Webhook does not support authorization, other than what can be sent by generating http headers</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If a webhook endpoint for a given <code>ExternalSecret</code> returns a 404 status code, the secret is considered to have been deleted.  This will trigger the <code>deletionPolicy</code> set on the <code>ExternalSecret</code>.</p>
-</div>
 <h3 id="templating">Templating</h3>
 <p>Generic WebHook provider uses the templating engine to generate the API call.  It can be used in the url, headers, body and result.jsonPath fields.</p>
 <p>The provider inserts the secret to be retrieved in the object named <code>remoteRef</code>.</p>
@@ -2176,8 +2092,8 @@ Each secret has a <code>name</code> property which determines the name of the ob
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2023 The external-secrets Authors.<br/>
-&copy; 2023 The Linux Foundation. All rights reserved.<br/><br/>
+      &copy; 2022 The external-secrets Authors.<br/>
+&copy; 2022 The Linux Foundation. All rights reserved.<br/><br/>
 The Linux Foundation has registered trademarks and uses trademarks.<br/>
 For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/">Trademark Usage page</a>.
 
