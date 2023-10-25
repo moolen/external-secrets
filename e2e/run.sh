@@ -42,9 +42,10 @@ kubectl create clusterrolebinding service-account-issuer-discovery-binding \
 echo -e "Starting the e2e test pod ${E2E_IMAGE_NAME}:${VERSION}"
 kubectl run --rm \
   --attach \
+  --image-pull-policy=Always \
   --restart=Never \
   --pod-running-timeout=5m \
-  --labels="app=eso-e2e" \
+  --labels="app=eso-e2e,azure.workload.identity/use=true" \
   --env="ACK_GINKGO_DEPRECATIONS=2.9.5" \
   --env="GINKGO_LABELS=${GINKGO_LABELS:-.*}" \
   --env="GCP_SM_SA_JSON=${GCP_SM_SA_JSON:-}" \
@@ -59,8 +60,8 @@ kubectl run --rm \
   --env="AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN:-}" \
   --env="AWS_SA_NAME=${AWS_SA_NAME:-}" \
   --env="AWS_SA_NAMESPACE=${AWS_SA_NAMESPACE:-}" \
-  --env="AZURE_CLIENT_ID=${AZURE_CLIENT_ID:-}" \
-  --env="AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET:-}" \
+  --env="AZURE_E2E_CLIENT_ID=${AZURE_CLIENT_ID:-}" \
+  --env="AZURE_E2E_CLIENT_SECRET=${AZURE_CLIENT_SECRET:-}" \
   --env="AKEYLESS_ACCESS_ID=${AKEYLESS_ACCESS_ID:-}" \
   --env="AKEYLESS_ACCESS_TYPE=${AKEYLESS_ACCESS_TYPE:-}" \
   --env="AKEYLESS_ACCESS_TYPE_PARAM=${AKEYLESS_ACCESS_TYPE_PARAM:-}" \
