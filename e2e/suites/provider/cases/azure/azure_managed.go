@@ -34,7 +34,7 @@ const (
 // to test workload-identity authentication.
 var _ = Describe("[azuremanaged] with pod identity", Label("azure", "keyvault", "managed", "workload-identity"), func() {
 	f := framework.New("eso-azuremanaged")
-	prov := newFromEnvWithWorkloadIdentity(f)
+	prov := newFromWorkloadIdentity(f)
 
 	// each test case gets its own ESO instance
 	BeforeEach(func() {

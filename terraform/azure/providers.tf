@@ -8,6 +8,8 @@ terraform {
 
 provider "azurerm" {
   features {}
+  # set this to false when running locally
+  use_oidc = true 
 }
 
 data "azurerm_kubernetes_cluster" "default" {

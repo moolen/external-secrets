@@ -33,6 +33,7 @@ import (
 	utilpointer "k8s.io/utils/pointer"
 
 	"github.com/external-secrets/external-secrets-e2e/framework"
+	gha "github.com/external-secrets/external-secrets-e2e/framework/github-actions"
 	esv1beta1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
 	esmeta "github.com/external-secrets/external-secrets/apis/meta/v1"
 	esoazkv "github.com/external-secrets/external-secrets/pkg/provider/azure/keyvault"
@@ -47,48 +48,70 @@ type azureProvider struct {
 	framework    *framework.Framework
 }
 
-func newazureProvider(f *framework.Framework, clientID, clientSecret, tenantID, vaultURL string) *azureProvider {
-	clientCredentialsConfig := kvauth.NewClientCredentialsConfig(clientID, clientSecret, tenantID)
-	clientCredentialsConfig.Resource = "https://vault.azure.net"
-	basicClient := keyvault.New()
-	prov := &azureProvider{
-		framework:    f,
-		client:       &basicClient,
-		clientID:     clientID,
-		clientSecret: clientSecret,
-		tenantID:     tenantID,
-		vaultURL:     vaultURL,
-	}
-
-	o := &sync.Once{}
-	BeforeEach(func() {
-		// run authorizor only if this spec is called
-		o.Do(func() {
-			authorizer, err := clientCredentialsConfig.Authorizer()
-			if err != nil {
-				Fail(err.Error())
-			}
-			prov.client.Authorizer = authorizer
-		})
-		prov.CreateSecretStore()
-		prov.CreateReferentSecretStore()
-	})
-
-	return prov
-}
-
 func newFromEnv(f *framework.Framework) *azureProvider {
 	vaultURL := os.Getenv("VAULT_URL")
 	tenantID := os.Getenv("TENANT_ID")
 	clientID := os.Getenv("AZURE_E2E_CLIENT_ID")
 	clientSecret := os.Getenv("AZURE_E2E_CLIENT_SECRET")
-	return newazureProvider(f, clientID, clientSecret, tenantID, vaultURL)
+
+	// we support two use-cases:
+	// 1. run it locally with client_id + client_secret
+	// 2. run it via CI with federated identity (GitHub Actions OIDC)
+	basicClient := keyvault.New()
+	prov := &azureProvider{
+		framework: f,
+		clientID:  clientID,
+		tenantID:  tenantID,
+		vaultURL:  vaultURL,
+		client:    &basicClient,
+		// clientSecret will be set later
+		// depending on the execution environment
+	}
+
+	BeforeEach(func() {
+		prov.CreateSecretStore()
+		prov.CreateReferentSecretStore()
+	})
+
+	defer GinkgoRecover()
+	token, err := gha.Token("api://AzureADTokenExchange")
+	// not running in GitHub Actions, fallback to using client_id + client_secret
+	if err == gha.ErrNotGHA {
+		prov.clientSecret = clientSecret
+		o := &sync.Once{}
+		BeforeEach(func() {
+			// run authorizor only if this spec is called
+			o.Do(func() {
+				defer GinkgoRecover()
+				clientCredentialsConfig := kvauth.NewClientCredentialsConfig(clientID, clientSecret, tenantID)
+				clientCredentialsConfig.Resource = "https://vault.azure.net"
+				authorizer, err := clientCredentialsConfig.Authorizer()
+				if err != nil {
+					Fail(err.Error())
+				}
+				prov.client.Authorizer = authorizer
+			})
+		})
+	} else if err != nil {
+		Fail(err.Error())
+	}
+
+	// exchange GitHub Actions id token with Azure access token
+	aadEndpoint := esoazkv.AadEndpointForType(esv1beta1.AzureEnvironmentPublicCloud)
+	resourceScope := strings.TrimSuffix(azure.PublicCloud.ServiceManagementEndpoint, "/")
+	tokenProvider, err := esoazkv.NewTokenProvider(context.Background(), string(token), clientID, tenantID, aadEndpoint, resourceScope)
+	if err != nil {
+		Fail(err.Error())
+	}
+	prov.client.Authorizer = autorest.NewBearerAuthorizer(tokenProvider)
+	prov.clientSecret = tokenProvider.OAuthToken()
+	return prov
 }
 
 // create a new provider from workload identity
 // the azwi webhook injects env vars into the container which we must pick up
 // please see here for details: https://azure.github.io/azure-workload-identity/docs/quick-start.html
-func newFromEnvWithWorkloadIdentity(f *framework.Framework) *azureProvider {
+func newFromWorkloadIdentity(f *framework.Framework) *azureProvider {
 	// from azwi webhook
 	tenantID := os.Getenv("AZURE_TENANT_ID")
 	clientID := os.Getenv("AZURE_CLIENT_ID")
@@ -96,7 +119,7 @@ func newFromEnvWithWorkloadIdentity(f *framework.Framework) *azureProvider {
 
 	// from run.sh
 	vaultURL := "https://eso-testing.vault.azure.net/"
-
+	defer GinkgoRecover()
 	token, err := os.ReadFile(tokenFilePath)
 	if err != nil {
 		Fail(err.Error())

@@ -42,7 +42,6 @@ kubectl create clusterrolebinding service-account-issuer-discovery-binding \
 echo -e "Starting the e2e test pod ${E2E_IMAGE_NAME}:${VERSION}"
 kubectl run --rm \
   --attach \
-  --image-pull-policy=Always \
   --restart=Never \
   --pod-running-timeout=5m \
   --labels="app=eso-e2e,azure.workload.identity/use=true" \
@@ -60,6 +59,8 @@ kubectl run --rm \
   --env="AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN:-}" \
   --env="AWS_SA_NAME=${AWS_SA_NAME:-}" \
   --env="AWS_SA_NAMESPACE=${AWS_SA_NAMESPACE:-}" \
+  --env="ACTIONS_ID_TOKEN_REQUEST_URL=${ACTIONS_ID_TOKEN_REQUEST_URL:-}" \
+  --env="ACTIONS_ID_TOKEN_REQUEST_TOKEN=${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" \
   --env="AZURE_E2E_CLIENT_ID=${AZURE_CLIENT_ID:-}" \
   --env="AZURE_E2E_CLIENT_SECRET=${AZURE_CLIENT_SECRET:-}" \
   --env="AKEYLESS_ACCESS_ID=${AKEYLESS_ACCESS_ID:-}" \
