@@ -30,11 +30,13 @@ func Token(aud string) (string, error) {
 	if idTokenRequestURL == "" {
 		return "", ErrNotGHA
 	}
-	targetURL := fmt.Sprintf("%s&audience=%s", idTokenRequestURL, aud)
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, targetURL, nil)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, idTokenRequestURL, nil)
 	if err != nil {
 		return "", err
 	}
+	q := req.URL.Query()
+	q.Add("audience", aud)
+	req.URL.RawQuery = q.Encode()
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", idTokenRequestToken))
 	req.Header.Add("User-Agent", "actions/oidc-client")
 

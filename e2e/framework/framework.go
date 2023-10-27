@@ -20,6 +20,7 @@ import (
 
 	// nolint
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/format"
 	api "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -29,6 +30,10 @@ import (
 	"github.com/external-secrets/external-secrets-e2e/framework/log"
 	"github.com/external-secrets/external-secrets-e2e/framework/util"
 )
+
+func init() {
+	format.MaxLength = 0
+}
 
 type Framework struct {
 	BaseName string

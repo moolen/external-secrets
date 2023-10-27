@@ -17,7 +17,7 @@ all: $(addprefix build-,$(ARCH))
 
 # Image registry for build/push image targets
 export IMAGE_REGISTRY ?= ghcr.io
-export IMAGE_REPO     ?= external-secrets/external-secrets
+export IMAGE_REPO     ?= moolen/external-secrets
 export IMAGE_NAME ?= $(IMAGE_REGISTRY)/$(IMAGE_REPO)
 
 BUNDLE_DIR     ?= deploy/crds

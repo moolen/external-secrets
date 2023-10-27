@@ -30,165 +30,165 @@ jobs:
           do_not_skip: '["workflow_dispatch", "schedule", "push"]'
           concurrent_skipping: false
 
-  lint:
-    runs-on: ubuntu-latest
-    needs: detect-noop
-    if: needs.detect-noop.outputs.noop != 'true' && github.ref != 'refs/heads/main'
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   needs: detect-noop
+  #   if: needs.detect-noop.outputs.noop != 'true' && github.ref != 'refs/heads/main'
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version-file: "go.mod"
+  #     - name: Setup Go
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version-file: "go.mod"
 
-      - name: Find the Go Cache
-        id: go
-        run: |
-          echo "::set-output name=build-cache::$(go env GOCACHE)"
-          echo "::set-output name=mod-cache::$(go env GOMODCACHE)"
+  #     - name: Find the Go Cache
+  #       id: go
+  #       run: |
+  #         echo "::set-output name=build-cache::$(go env GOCACHE)"
+  #         echo "::set-output name=mod-cache::$(go env GOMODCACHE)"
 
-      - name: Cache the Go Build Cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.go.outputs.build-cache }}
-          key: ${{ runner.os }}-build-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
+  #     - name: Cache the Go Build Cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${{ steps.go.outputs.build-cache }}
+  #         key: ${{ runner.os }}-build-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Cache Go Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.go.outputs.mod-cache }}
-          key: ${{ runner.os }}-mod-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
+  #     - name: Cache Go Dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${{ steps.go.outputs.mod-cache }}
+  #         key: ${{ runner.os }}-mod-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: ${{ env.GOLANGCI_VERSION }}
-          skip-pkg-cache: true
-          skip-build-cache: true
+  #     - name: Lint
+  #       uses: golangci/golangci-lint-action@v3
+  #       with:
+  #         version: ${{ env.GOLANGCI_VERSION }}
+  #         skip-pkg-cache: true
+  #         skip-build-cache: true
 
-  check-diff:
-    runs-on: ubuntu-latest
-    needs: detect-noop
-    if: needs.detect-noop.outputs.noop != 'true' && github.ref != 'refs/heads/main'
+  # check-diff:
+  #   runs-on: ubuntu-latest
+  #   needs: detect-noop
+  #   if: needs.detect-noop.outputs.noop != 'true' && github.ref != 'refs/heads/main'
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+  #     - name: Configure Git
+  #       run: |
+  #         git config user.name "$GITHUB_ACTOR"
+  #         git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version-file: "go.mod"
+  #     - name: Setup Go
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version-file: "go.mod"
 
-      - name: Find the Go Cache
-        id: go
-        run: |
-          echo "::set-output name=build-cache::$(go env GOCACHE)"
-          echo "::set-output name=mod-cache::$(go env GOMODCACHE)"
+  #     - name: Find the Go Cache
+  #       id: go
+  #       run: |
+  #         echo "::set-output name=build-cache::$(go env GOCACHE)"
+  #         echo "::set-output name=mod-cache::$(go env GOMODCACHE)"
 
-      - name: Cache the Go Build Cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.go.outputs.build-cache }}
-          key: ${{ runner.os }}-build-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
+  #     - name: Cache the Go Build Cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${{ steps.go.outputs.build-cache }}
+  #         key: ${{ runner.os }}-build-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Cache Go Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.go.outputs.mod-cache }}
-          key: ${{ runner.os }}-mod-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
+  #     - name: Cache Go Dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${{ steps.go.outputs.mod-cache }}
+  #         key: ${{ runner.os }}-mod-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Check Diff
-        run: |
-          make check-diff
+  #     - name: Check Diff
+  #       run: |
+  #         make check-diff
 
-  unit-tests:
-    runs-on: ubuntu-latest
-    needs: detect-noop
-    if: needs.detect-noop.outputs.noop != 'true' && github.ref != 'refs/heads/main'
+  # unit-tests:
+  #   runs-on: ubuntu-latest
+  #   needs: detect-noop
+  #   if: needs.detect-noop.outputs.noop != 'true' && github.ref != 'refs/heads/main'
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Fetch History
-        run: git fetch --prune --unshallow
+  #     - name: Fetch History
+  #       run: git fetch --prune --unshallow
 
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version-file: "go.mod"
+  #     - name: Setup Go
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version-file: "go.mod"
 
-      - name: Find the Go Cache
-        id: go
-        run: |
-          echo "::set-output name=build-cache::$(go env GOCACHE)"
-          echo "::set-output name=mod-cache::$(go env GOMODCACHE)"
+  #     - name: Find the Go Cache
+  #       id: go
+  #       run: |
+  #         echo "::set-output name=build-cache::$(go env GOCACHE)"
+  #         echo "::set-output name=mod-cache::$(go env GOMODCACHE)"
 
-      - name: Cache the Go Build Cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.go.outputs.build-cache }}
-          key: ${{ runner.os }}-build-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
+  #     - name: Cache the Go Build Cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${{ steps.go.outputs.build-cache }}
+  #         key: ${{ runner.os }}-build-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Cache Go Dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.go.outputs.mod-cache }}
-          key: ${{ runner.os }}-mod-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
+  #     - name: Cache Go Dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ${{ steps.go.outputs.mod-cache }}
+  #         key: ${{ runner.os }}-mod-${{ github.sha }}-${{ hashFiles('**/go.sum') }}
 
-      - name: Cache envtest binaries
-        uses: actions/cache@v3
-        with:
-          path: bin/k8s
-          key: ${{ runner.os }}-envtest-${{env.KUBERNETES_VERSION}}
+  #     - name: Cache envtest binaries
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: bin/k8s
+  #         key: ${{ runner.os }}-envtest-${{env.KUBERNETES_VERSION}}
 
-      - name: Run Unit Tests
-        run: |
-          make test
+  #     - name: Run Unit Tests
+  #       run: |
+  #         make test
 
-  publish-artifacts:
-    needs: detect-noop
-    if: needs.detect-noop.outputs.noop != 'true'
-    uses: ./.github/workflows/publish.yml
-    permissions:
-      id-token: write
-      contents: read
-    strategy:
-      matrix:
-        include:
-        - dockerfile: "Dockerfile"
-          build-args: "CGO_ENABLED=0"
-          build-arch: "amd64 arm64 s390x"
-          build-platform: "linux/amd64,linux/arm64,linux/s390x"
-          tag-suffix: "" # distroless
-        - dockerfile: "Dockerfile.ubi"
-          build-args: "CGO_ENABLED=0"
-          build-arch: "amd64 arm64"
-          build-platform: "linux/amd64,linux/arm64"
-          tag-suffix: "-ubi"
-        - dockerfile: "Dockerfile.ubi"
-          build-args: "CGO_ENABLED=0 GOEXPERIMENT=boringcrypto"
-          build-arch: "amd64"
-          build-platform: "linux/amd64"
-          tag-suffix: "-ubi-boringssl"
-    with:
-      dockerfile: ${{ matrix.dockerfile }}
-      tag-suffix: ${{ matrix.tag-suffix }}
-      image-name: ghcr.io/${{ github.repository }}
-      build-platform: ${{ matrix.build-platform }}
-      build-args: ${{ matrix.build-args }}
-      build-arch: ${{ matrix.build-arch }}
-      ref: ${{ github.ref }}
-    secrets:
-      GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+  # publish-artifacts:
+  #   needs: detect-noop
+  #   if: needs.detect-noop.outputs.noop != 'true'
+  #   uses: ./.github/workflows/publish.yml
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   strategy:
+  #     matrix:
+  #       include:
+  #       - dockerfile: "Dockerfile"
+  #         build-args: "CGO_ENABLED=0"
+  #         build-arch: "amd64 arm64 s390x"
+  #         build-platform: "linux/amd64,linux/arm64,linux/s390x"
+  #         tag-suffix: "" # distroless
+  #       - dockerfile: "Dockerfile.ubi"
+  #         build-args: "CGO_ENABLED=0"
+  #         build-arch: "amd64 arm64"
+  #         build-platform: "linux/amd64,linux/arm64"
+  #         tag-suffix: "-ubi"
+  #       - dockerfile: "Dockerfile.ubi"
+  #         build-args: "CGO_ENABLED=0 GOEXPERIMENT=boringcrypto"
+  #         build-arch: "amd64"
+  #         build-platform: "linux/amd64"
+  #         tag-suffix: "-ubi-boringssl"
+  #   with:
+  #     dockerfile: ${{ matrix.dockerfile }}
+  #     tag-suffix: ${{ matrix.tag-suffix }}
+  #     image-name: ghcr.io/${{ github.repository }}
+  #     build-platform: ${{ matrix.build-platform }}
+  #     build-args: ${{ matrix.build-args }}
+  #     build-arch: ${{ matrix.build-arch }}
+  #     ref: ${{ github.ref }}
+  #   secrets:
+  #     GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+  #     GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 

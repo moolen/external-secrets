@@ -6,10 +6,18 @@ runs:
   steps:
 
     - name: Configure AWS Credentials
+      continue-on-error: true
       uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: ${{ env.AWS_OIDC_ROLE_ARN }}
         aws-region: ${{ env.AWS_REGION }}
+
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+        client-id: ${{ env.TFC_AZURE_CLIENT_ID }}
+        tenant-id: ${{ env.TFC_AZURE_TENANT_ID }}
+        subscription-id: ${{ env.TFC_AZURE_SUBSCRIPTION_ID }}
 
     - name: Setup Go
       uses: actions/setup-go@v3

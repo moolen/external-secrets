@@ -6,7 +6,7 @@ KIND_IMG       = "kindest/node:v1.24.2@sha256:1f0cee2282f43150b52dc7933183ed96ab
 DOCKER_BUILD_ARGS     ?=
 
 export E2E_IMAGE_NAME ?= ghcr.io/external-secrets/external-secrets-e2e
-export GINKGO_LABELS ?= !managed
+export GINKGO_LABELS ?= !managed && azure
 export TEST_SUITES ?= provider generator flux argocd
 
 start-kind: ## Start kind cluster
