@@ -5,7 +5,7 @@ go 1.25.1
 require (
 	github.com/aws/aws-sdk-go v1.55.8
 	github.com/external-secrets/external-secrets/apis v0.0.0
-	github.com/external-secrets/external-secrets/providers/v1/aws v0.0.0-00010101000000-000000000000
+	github.com/external-secrets/external-secrets/providers/v2/aws v0.0.0-00010101000000-000000000000
 	github.com/external-secrets/external-secrets/runtime v0.0.0
 	github.com/go-logr/logr v1.4.3
 	github.com/golang-jwt/jwt/v5 v5.2.2
@@ -132,4 +132,4 @@ replace (
 	github.com/external-secrets/external-secrets/runtime => ../../../runtime
 )
 
-replace github.com/external-secrets/external-secrets/providers/v1/aws => ../aws
+replace github.com/external-secrets/external-secrets/providers/v2/aws => ../aws

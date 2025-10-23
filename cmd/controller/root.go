@@ -38,6 +38,9 @@ import (
 	esv1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
 	esv1alpha1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1alpha1"
 	genv1alpha1 "github.com/external-secrets/external-secrets/apis/generators/v1alpha1"
+	awsv2 "github.com/external-secrets/external-secrets/apis/provider/aws/v2alpha1"
+	fakev2alpha1 "github.com/external-secrets/external-secrets/apis/provider/fake/v2alpha1"
+	k8sv2alpha1 "github.com/external-secrets/external-secrets/apis/provider/kubernetes/v2alpha1"
 	"github.com/external-secrets/external-secrets/pkg/controllers/clusterexternalsecret"
 	"github.com/external-secrets/external-secrets/pkg/controllers/clusterexternalsecret/cesmetrics"
 	"github.com/external-secrets/external-secrets/pkg/controllers/clusterpushsecret"
@@ -47,6 +50,7 @@ import (
 	"github.com/external-secrets/external-secrets/pkg/controllers/externalsecret/esmetrics"
 	"github.com/external-secrets/external-secrets/pkg/controllers/generatorstate"
 	ctrlmetrics "github.com/external-secrets/external-secrets/pkg/controllers/metrics"
+	"github.com/external-secrets/external-secrets/pkg/controllers/provider"
 	"github.com/external-secrets/external-secrets/pkg/controllers/pushsecret"
 	"github.com/external-secrets/external-secrets/pkg/controllers/pushsecret/psmetrics"
 	"github.com/external-secrets/external-secrets/pkg/controllers/secretstore"
@@ -100,6 +104,8 @@ var (
 	tlsCiphers                            string
 	tlsMinVersion                         string
 	enableHTTP2                           bool
+	providerNamespace                     string
+	providerServiceNames                  []string
 )
 
 const (
@@ -115,6 +121,11 @@ func init() {
 	utilruntime.Must(esv1.AddToScheme(scheme))
 	utilruntime.Must(esv1alpha1.AddToScheme(scheme))
 	utilruntime.Must(genv1alpha1.AddToScheme(scheme))
+
+	// v2 provider schemes
+	utilruntime.Must(awsv2.AddToScheme(scheme))
+	utilruntime.Must(fakev2alpha1.AddToScheme(scheme))
+	utilruntime.Must(k8sv2alpha1.AddToScheme(scheme))
 }
 
 var rootCmd = &cobra.Command{
@@ -197,20 +208,35 @@ var rootCmd = &cobra.Command{
 		}
 
 		ssmetrics.SetUpMetrics()
-		if err = (&secretstore.StoreReconciler{
-			Client:            mgr.GetClient(),
-			Log:               ctrl.Log.WithName("controllers").WithName("SecretStore"),
-			Scheme:            mgr.GetScheme(),
-			ControllerClass:   controllerClass,
-			RequeueInterval:   storeRequeueInterval,
-			PushSecretEnabled: enablePushSecretReconciler,
+		// if err = (&secretstore.StoreReconciler{
+		// 	Client:            mgr.GetClient(),
+		// 	Log:               ctrl.Log.WithName("controllers").WithName("SecretStore"),
+		// 	Scheme:            mgr.GetScheme(),
+		// 	ControllerClass:   controllerClass,
+		// 	RequeueInterval:   storeRequeueInterval,
+		// 	PushSecretEnabled: enablePushSecretReconciler,
+		// }).SetupWithManager(mgr, controller.Options{
+		// 	MaxConcurrentReconciles: concurrent,
+		// 	RateLimiter:             ctrlcommon.BuildRateLimiter(),
+		// }); err != nil {
+		// 	setupLog.Error(err, errCreateController, "controller", "SecretStore")
+		// 	os.Exit(1)
+		// }
+
+		// V2 ProviderConnection controller
+		if err = (&provider.Reconciler{
+			Client:          mgr.GetClient(),
+			Log:             ctrl.Log.WithName("controllers").WithName("ProviderConnection"),
+			Scheme:          mgr.GetScheme(),
+			RequeueInterval: storeRequeueInterval,
 		}).SetupWithManager(mgr, controller.Options{
 			MaxConcurrentReconciles: concurrent,
 			RateLimiter:             ctrlcommon.BuildRateLimiter(),
 		}); err != nil {
-			setupLog.Error(err, errCreateController, "controller", "SecretStore")
+			setupLog.Error(err, errCreateController, "controller", "ProviderConnection")
 			os.Exit(1)
 		}
+
 		if enableClusterStoreReconciler {
 			cssmetrics.SetUpMetrics()
 			if err = (&secretstore.ClusterStoreReconciler{

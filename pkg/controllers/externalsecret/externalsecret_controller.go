@@ -54,7 +54,7 @@ import (
 	// Metrics.
 	"github.com/external-secrets/external-secrets/pkg/controllers/externalsecret/esmetrics"
 	ctrlmetrics "github.com/external-secrets/external-secrets/pkg/controllers/metrics"
-	"github.com/external-secrets/external-secrets/pkg/controllers/util"
+	ctrlutil "github.com/external-secrets/external-secrets/pkg/controllers/util"
 	"github.com/external-secrets/external-secrets/runtime/esutils"
 	"github.com/external-secrets/external-secrets/runtime/esutils/resolvers"
 
@@ -895,6 +895,8 @@ func shouldSkipUnmanagedStore(ctx context.Context, namespace string, r *Reconcil
 		case esv1.ClusterSecretStoreKind:
 			store = &esv1.ClusterSecretStore{}
 			namespace = ""
+		case "Provider":
+			return false, nil
 		default:
 			return false, fmt.Errorf("unsupported secret store kind: %s", ref.Kind)
 		}

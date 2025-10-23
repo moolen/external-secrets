@@ -581,6 +581,17 @@
         "processPushSecret": {
             "type": "boolean"
         },
+        "providers": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "list": {
+                    "type": "array"
+                }
+            }
+        },
         "rbac": {
             "type": "object",
             "properties": {
