@@ -84,6 +84,10 @@ type Reconciler struct {
 	leaderElected    bool
 	readyStatusMapMu *sync.Mutex
 	readyStatusMap   map[string]bool
+
+	// V2 provider certificate management
+	ManageProviderCerts bool
+	ProviderConfigs     []ProviderCertConfig
 }
 
 // Opts defines configuration options for the CRD controller.
@@ -93,26 +97,31 @@ type Opts struct {
 	SecretName      string
 	SecretNamespace string
 	Resources       []string
+	// V2 provider certificate management options
+	ManageProviderCerts bool
+	ProviderConfigs     []ProviderCertConfig
 }
 
 // New returns a new CRD controller instance.
 func New(k8sClient client.Client, scheme *runtime.Scheme, leaderChan <-chan struct{}, logger logr.Logger,
 	interval time.Duration, opts Opts) *Reconciler {
 	return &Reconciler{
-		Client:           k8sClient,
-		Log:              logger,
-		Scheme:           scheme,
-		SvcName:          opts.SvcName,
-		SvcNamespace:     opts.SvcNamespace,
-		SecretName:       opts.SecretName,
-		SecretNamespace:  opts.SecretNamespace,
-		RequeueInterval:  interval,
-		CrdResources:     opts.Resources,
-		CAName:           "external-secrets",
-		CAOrganization:   "external-secrets",
-		leaderChan:       leaderChan,
-		readyStatusMapMu: &sync.Mutex{},
-		readyStatusMap:   map[string]bool{},
+		Client:              k8sClient,
+		Log:                 logger,
+		Scheme:              scheme,
+		SvcName:             opts.SvcName,
+		SvcNamespace:        opts.SvcNamespace,
+		SecretName:          opts.SecretName,
+		SecretNamespace:     opts.SecretNamespace,
+		RequeueInterval:     interval,
+		CrdResources:        opts.Resources,
+		CAName:              "external-secrets",
+		CAOrganization:      "external-secrets",
+		leaderChan:          leaderChan,
+		readyStatusMapMu:    &sync.Mutex{},
+		readyStatusMap:      map[string]bool{},
+		ManageProviderCerts: opts.ManageProviderCerts,
+		ProviderConfigs:     opts.ProviderConfigs,
 	}
 }
 
@@ -140,6 +149,18 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		r.readyStatusMap[req.NamespacedName.Name] = true
 		r.readyStatusMapMu.Unlock()
 	}
+
+	// Reconcile provider certificates if enabled
+	log.Info("Reconciling provider certificates", "enabled", r.ManageProviderCerts, "cfgs", r.ProviderConfigs)
+	if r.ManageProviderCerts {
+		for _, config := range r.ProviderConfigs {
+			if err := r.ReconcileProviderCert(ctx, config); err != nil {
+				log.Error(err, "failed to reconcile provider certificate", "provider", config.Name)
+				// Don't fail CRD reconciliation if provider cert fails, just log and continue
+			}
+		}
+	}
+
 	return ctrl.Result{RequeueAfter: r.RequeueInterval}, nil
 }
 

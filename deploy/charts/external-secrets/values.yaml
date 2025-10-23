@@ -667,3 +667,146 @@ dnsConfig: {}
 
 # -- Any extra pod spec on the deployment
 podSpecExtra: {}
+
+# -- Provider deployment configuration
+# Deploy one or more external secret providers alongside the controller
+# Each provider runs as a separate deployment with its own configuration
+providers:
+  # -- Enable provider deployments
+  enabled: false
+  
+  # -- List of providers to deploy
+  # Each provider can be configured independently with its own settings
+  list: []
+  # Example configuration:
+  # - name: aws
+  #   type: aws
+  #   enabled: true
+  #   replicaCount: 2
+  #   
+  #   image:
+  #     repository: oci.external-secrets.io/external-secrets/provider-aws
+  #     pullPolicy: IfNotPresent
+  #     tag: ""
+  #   
+  #   imagePullSecrets: []
+  #   
+  #   serviceAccount:
+  #     create: true
+  #     annotations: {}
+  #       # eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/eso-provider-aws
+  #     name: ""
+  #     automount: true
+  #   
+  #   podAnnotations: {}
+  #   podLabels: {}
+  #   
+  #   podSecurityContext:
+  #     enabled: true
+  #     runAsNonRoot: true
+  #     runAsUser: 65532
+  #     fsGroup: 65532
+  #     seccompProfile:
+  #       type: RuntimeDefault
+  #   
+  #   securityContext:
+  #     enabled: true
+  #     allowPrivilegeEscalation: false
+  #     readOnlyRootFilesystem: true
+  #     runAsNonRoot: true
+  #     runAsUser: 65532
+  #     capabilities:
+  #       drop:
+  #       - ALL
+  #   
+  #   service:
+  #     type: ClusterIP
+  #     port: 8080
+  #     annotations: {}
+  #   
+  #   resources:
+  #     limits:
+  #       cpu: 200m
+  #       memory: 256Mi
+  #     requests:
+  #       cpu: 50m
+  #       memory: 64Mi
+  #   
+  #   nodeSelector: {}
+  #   tolerations: []
+  #   affinity:
+  #     podAntiAffinity:
+  #       preferredDuringSchedulingIgnoredDuringExecution:
+  #       - weight: 100
+  #         podAffinityTerm:
+  #           labelSelector:
+  #             matchLabels:
+  #               app.kubernetes.io/component: provider
+  #               external-secrets.io/provider: aws
+  #           topologyKey: kubernetes.io/hostname
+  #   
+  #   topologySpreadConstraints: []
+  #   priorityClassName: ""
+  #   
+  #   podDisruptionBudget:
+  #     enabled: true
+  #     minAvailable: 1
+  #   
+  #   tls:
+  #     enabled: true
+  #     certPath: /etc/provider/certs
+  #     caSecretName: external-secrets-v2-ca
+  #     mountCA: true
+  #   
+  #   # Provider-specific configuration
+  #   config: {}
+  #     # For AWS provider:
+  #     # region: us-east-1
+  #     # authMethod: irsa  # irsa, credentials, none
+  #     # credentials:
+  #     #   existingSecret: ""
+  #     #   accessKeyId: ""
+  #     #   secretAccessKey: ""
+  #     # assumeRoleARN: ""
+  #     # sessionTags: {}
+  #     # externalID: ""
+  #     # connectionPool:
+  #     #   maxConnections: 50
+  #     #   idleTimeout: 5m
+  #     #   maxLifetime: 30m
+  #   
+  #   metrics:
+  #     enabled: true
+  #     port: 8081
+  #     serviceMonitor:
+  #       enabled: false
+  #       namespace: ""
+  #       interval: 30s
+  #       scrapeTimeout: 10s
+  #       labels: {}
+  #   
+  #   health:
+  #     port: 8082
+  #     livenessProbe:
+  #       enabled: false
+  #       initialDelaySeconds: 10
+  #       periodSeconds: 20
+  #       timeoutSeconds: 5
+  #       failureThreshold: 3
+  #     readinessProbe:
+  #       enabled: false
+  #       initialDelaySeconds: 5
+  #       periodSeconds: 10
+  #       timeoutSeconds: 5
+  #       failureThreshold: 3
+  #   
+  #   extraEnv: []
+  #   extraVolumes: []
+  #   extraVolumeMounts: []
+  #   
+  #   autoscaling:
+  #     enabled: false
+  #     minReplicas: 2
+  #     maxReplicas: 10
+  #     targetCPUUtilizationPercentage: 80
+  #     targetMemoryUtilizationPercentage: 80
