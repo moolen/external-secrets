@@ -144,7 +144,7 @@ func (m *Manager) Get(ctx context.Context, storeRef esv1.SecretStoreRef, namespa
 // returns a previously stored client from the cache if store and store-version match
 // if a client exists for the same provider which points to a different store or store version
 // it will be cleaned up.
-func (m *Manager) getStoredClient(ctx context.Context, storeProvider esv1.Provider, store esv1.GenericStore) esv1.SecretsClient {
+func (m *Manager) getStoredClient(ctx context.Context, storeProvider esv1.ProviderInterface, store esv1.GenericStore) esv1.SecretsClient {
 	idx := storeKey(storeProvider)
 	val, ok := m.clientMap[idx]
 	if !ok {
@@ -179,7 +179,7 @@ func (m *Manager) getStoredClient(ctx context.Context, storeProvider esv1.Provid
 	return nil
 }
 
-func storeKey(storeProvider esv1.Provider) clientKey {
+func storeKey(storeProvider esv1.ProviderInterface) clientKey {
 	return clientKey{
 		providerType: fmt.Sprintf("%T", storeProvider),
 	}

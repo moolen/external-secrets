@@ -37,10 +37,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	"github.com/external-secrets/external-secrets/pkg/constants"
 	ctrlcommon "github.com/external-secrets/external-secrets/pkg/controllers/common"
 	"github.com/external-secrets/external-secrets/pkg/controllers/crds"
 	"github.com/external-secrets/external-secrets/pkg/controllers/webhookconfig"
+	"github.com/external-secrets/external-secrets/runtime/constants"
 )
 
 var certcontrollerCmd = &cobra.Command{
@@ -112,11 +112,13 @@ var certcontrollerCmd = &cobra.Command{
 			ctrl.Log.WithName("controllers").WithName("webhook-certs-updater"),
 			crdRequeueInterval,
 			crds.Opts{
-				SvcName:         serviceName,
-				SvcNamespace:    serviceNamespace,
-				SecretName:      secretName,
-				SecretNamespace: secretNamespace,
-				Resources:       crdNames,
+				SvcName:             serviceName,
+				SvcNamespace:        serviceNamespace,
+				SecretName:          secretName,
+				SecretNamespace:     secretNamespace,
+				Resources:           crdNames,
+				ManageProviderCerts: len(providerNames) > 0,
+				ProviderConfigs:     buildProviderConfigs(),
 			})
 		if err := crdctrl.SetupWithManager(mgr, controller.Options{
 			MaxConcurrentReconciles: concurrent,
@@ -162,6 +164,39 @@ var certcontrollerCmd = &cobra.Command{
 	},
 }
 
+func buildProviderConfigs() []crds.ProviderCertConfig {
+	configs := make([]crds.ProviderCertConfig, 0)
+
+	// All provider arrays must have the same length
+	if len(providerNames) == 0 {
+		return configs
+	}
+
+	// Validate that all arrays have matching lengths
+	if len(providerNames) != len(providerNamespaces) ||
+		len(providerNames) != len(providerSecretNames) ||
+		len(providerNames) != len(providerServiceNames) {
+		setupLog.Error(nil, "provider configuration arrays have mismatched lengths",
+			"names", len(providerNames),
+			"namespaces", len(providerNamespaces),
+			"secretNames", len(providerSecretNames),
+			"serviceNames", len(providerServiceNames))
+		return configs
+	}
+
+	for i := range providerNames {
+		configs = append(configs, crds.ProviderCertConfig{
+			Name:        providerNames[i],
+			Namespace:   providerNamespaces[i],
+			SecretName:  providerSecretNames[i],
+			ServiceName: providerServiceNames[i],
+		})
+	}
+
+	setupLog.Info("configured provider certificates", "count", len(configs), "providers", providerNames)
+	return configs
+}
+
 func setupLogger() {
 	var lvl zapcore.Level
 	var enc zapcore.TimeEncoder
@@ -204,4 +239,8 @@ func init() {
 	certcontrollerCmd.Flags().DurationVar(&crdRequeueInterval, "crd-requeue-interval", time.Minute*5, "Time duration between reconciling CRDs for new certs")
 	certcontrollerCmd.Flags().BoolVar(&enableHTTP2, "enable-http2", false,
 		"If set, HTTP/2 will be enabled for the metrics server")
+	certcontrollerCmd.Flags().StringSliceVar(&providerNames, "provider-name", []string{}, "Provider names for certificate management (can be repeated)")
+	certcontrollerCmd.Flags().StringSliceVar(&providerNamespaces, "provider-namespace", []string{}, "Provider namespaces (must match provider-name count)")
+	certcontrollerCmd.Flags().StringSliceVar(&providerSecretNames, "provider-secret-name", []string{}, "Provider secret names for certificates (must match provider-name count)")
+	certcontrollerCmd.Flags().StringSliceVar(&providerServiceNames, "provider-service-name", []string{}, "Provider service names for DNS SANs (must match provider-name count)")
 }

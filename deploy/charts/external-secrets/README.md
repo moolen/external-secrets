@@ -20,6 +20,52 @@ To install the chart with the release name `external-secrets`:
 helm install external-secrets external-secrets/external-secrets
 ```
 
+### Installing with Providers
+The chart now supports deploying external secret providers directly alongside the controller. This creates a unified deployment where providers run as separate services.
+
+To deploy with providers:
+```bash
+helm install external-secrets external-secrets/external-secrets \
+  --set providers.enabled=true \
+  --set providers.list[0].name=aws \
+  --set providers.list[0].type=aws \
+  --set providers.list[0].enabled=true
+```
+
+Or use a custom values file (see `values-with-providers-example.yaml` for a complete example):
+```bash
+helm install external-secrets external-secrets/external-secrets -f my-values.yaml
+```
+
+Example provider configuration:
+```yaml
+providers:
+  enabled: true
+  list:
+    - name: aws-primary
+      type: aws
+      enabled: true
+      replicaCount: 2
+      image:
+        repository: oci.external-secrets.io/external-secrets/provider-aws
+      serviceAccount:
+        create: true
+        annotations:
+          eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/eso-provider-aws
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 64Mi
+      config:
+        region: us-east-1
+        authMethod: irsa
+```
+
+Multiple providers can be deployed simultaneously by adding additional entries to the `providers.list` array. Each provider can have its own configuration, security settings, resource limits, and cloud provider authentication.
+
 ### Custom Resources
 By default, the chart will install external-secrets CRDs, this can be controlled with `installCRDs` value.
 

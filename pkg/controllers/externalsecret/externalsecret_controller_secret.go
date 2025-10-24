@@ -29,17 +29,24 @@ import (
 	esv1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
 	genv1alpha1 "github.com/external-secrets/external-secrets/apis/generators/v1alpha1"
 	"github.com/external-secrets/external-secrets/pkg/controllers/secretstore"
-	"github.com/external-secrets/external-secrets/pkg/esutils"
-	"github.com/external-secrets/external-secrets/pkg/esutils/resolvers"
-	"github.com/external-secrets/external-secrets/pkg/generator/statemanager"
+	"github.com/external-secrets/external-secrets/runtime/esutils"
+	"github.com/external-secrets/external-secrets/runtime/esutils/resolvers"
+	"github.com/external-secrets/external-secrets/runtime/statemanager"
 
 	// Loading registered generators.
-	_ "github.com/external-secrets/external-secrets/pkg/generator/register"
-	_ "github.com/external-secrets/external-secrets/pkg/provider/register"
+	_ "github.com/external-secrets/external-secrets/pkg/register"
+	_ "github.com/external-secrets/external-secrets/pkg/register"
 )
 
 // GetProviderSecretData returns the provider's secret data with the provided ExternalSecret.
 func (r *Reconciler) GetProviderSecretData(ctx context.Context, externalSecret *esv1.ExternalSecret) (providerData map[string][]byte, err error) {
+	// Check if this is a v2 SecretStore
+	if r.isV2SecretStore(ctx, externalSecret.Spec.SecretStoreRef, externalSecret.Namespace) {
+		r.Log.Info("using v2 SecretStore", "store", externalSecret.Spec.SecretStoreRef.Name)
+		return r.getProviderSecretDataV2(ctx, externalSecret)
+	}
+
+	// V1 path (existing implementation)
 	// We MUST NOT create multiple instances of a provider client (mostly due to limitations with GCP)
 	// Clientmanager keeps track of the client instances
 	// that are created during the fetching process and closes clients

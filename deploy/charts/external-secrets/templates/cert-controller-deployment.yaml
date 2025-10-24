@@ -76,6 +76,16 @@ spec:
           {{- if .Values.enableHTTP2 }}
           - --enable-http2=true
           {{- end }}
+          {{- if and .Values.providers.enabled .Values.providers.list }}
+          {{- range .Values.providers.list }}
+          {{- if .enabled }}
+          - --provider-name={{ .name | default .type }}
+          - --provider-namespace={{ include "external-secrets.namespace" $ }}
+          - --provider-secret-name={{ include "external-secrets.provider.fullname" (dict "provider" . "root" $) }}-tls
+          - --provider-service-name={{ include "external-secrets.provider.servicename" (dict "provider" . "root" $) }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
           {{- range $key, $value := .Values.certController.extraArgs }}
             {{- if $value }}
           - --{{ $key }}={{ $value }}
