@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -25,16 +26,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	genv1alpha1 "github.com/external-secrets/external-secrets/apis/generators/v1alpha1"
-	fakev2alpha1 "github.com/external-secrets/external-secrets/apis/provider/fake/v2alpha1"
-	genpb "github.com/external-secrets/external-secrets/proto/generator"
-	pb "github.com/external-secrets/external-secrets/proto/provider"
-	"github.com/external-secrets/external-secrets/providers/v2/adapter"
-	adaptergenerator "github.com/external-secrets/external-secrets/providers/v2/adapter/generator"
-	adapterstore "github.com/external-secrets/external-secrets/providers/v2/adapter/store"
-	grpcserver "github.com/external-secrets/external-secrets/providers/v2/common/grpc/server"
-	generator "github.com/external-secrets/external-secrets/providers/v2/fake/generator"
-	store "github.com/external-secrets/external-secrets/providers/v2/fake/store"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
@@ -43,6 +34,38 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
+
+	{{- if .HasStores}}
+	v1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
+	{{- end}}
+	{{- if .HasGenerators}}
+	genv1alpha1 "github.com/external-secrets/external-secrets/apis/generators/v1alpha1"
+	{{- end}}
+	{{- if .Provider.Provider.V2Package}}
+	{{.Provider.Provider.Name}}v2alpha1 "{{.Provider.Provider.V2Package}}"
+	{{- end}}
+	{{- if .HasGenerators}}
+	genpb "github.com/external-secrets/external-secrets/proto/generator"
+	{{- end}}
+	{{- if .HasStores}}
+	pb "github.com/external-secrets/external-secrets/proto/provider"
+	{{- end}}
+	{{- if and .HasStores .HasGenerators}}
+	"github.com/external-secrets/external-secrets/providers/v2/adapter"
+	{{- end}}
+	{{- if .HasGenerators}}
+	adaptergenerator "github.com/external-secrets/external-secrets/providers/v2/adapter/generator"
+	{{- end}}
+	{{- if .HasStores}}
+	adapterstore "github.com/external-secrets/external-secrets/providers/v2/adapter/store"
+	{{- end}}
+	grpcserver "github.com/external-secrets/external-secrets/providers/v2/common/grpc/server"
+	{{- range .UniqueStoreImports}}
+	{{.Alias}} "{{.Path}}"
+	{{- end}}
+	{{- range .UniqueGeneratorImports}}
+	{{.Alias}} "{{.Path}}"
+	{{- end}}
 )
 
 var (
@@ -59,8 +82,12 @@ func main() {
 	// Create Kubernetes client (required by adapter)
 	scheme := runtime.NewScheme()
 	_ = clientgoscheme.AddToScheme(scheme)
-	_ = fakev2alpha1.AddToScheme(scheme)
+	{{- if .Provider.Provider.V2Package}}
+	_ = {{.Provider.Provider.Name}}v2alpha1.AddToScheme(scheme)
+	{{- end}}
+	{{- if .HasGenerators}}
 	_ = genv1alpha1.AddToScheme(scheme)
+	{{- end}}
 
 	cfg, err := config.GetConfig()
 	if err != nil {
@@ -71,28 +98,47 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create Kubernetes client: %v", err)
 	}
+
+	{{- if .HasStores}}
 	// Setup v1 provider(s)
-	v1Provider0 := store.NewProvider()
+	{{- range $idx, $store := .Stores}}
+	v1Provider{{$idx}} := {{$store.ImportAlias}}.{{$store.V1ProviderFunc}}()
+	{{- end}}
 	providerMapping := adapterstore.ProviderMapping{
+		{{- range $idx, $store := .Stores}}
 		schema.GroupVersionKind{
-			Group:   "provider.external-secrets.io",
-			Version: "v2alpha1",
-			Kind:    "Fake",
-		}: v1Provider0,
+			Group:   "{{$store.GVK.Group}}",
+			Version: "{{$store.GVK.Version}}",
+			Kind:    "{{$store.GVK.Kind}}",
+		}: v1Provider{{$idx}},
+		{{- end}}
 	}
 
 	specMapper := GetSpecMapper(kubeClient)
+	{{- end}}
+
+	{{- if .HasGenerators}}
 	// Setup v1 generator(s)
 	generatorMapping := adaptergenerator.GeneratorMapping{
+		{{- range $idx, $gen := .Generators}}
 		schema.GroupVersionKind{
-			Group:   "generators.external-secrets.io",
-			Version: "v1alpha1",
-			Kind:    "Fake",
-		}: generator.NewGenerator(),
+			Group:   "{{$gen.GVK.Group}}",
+			Version: "{{$gen.GVK.Version}}",
+			Kind:    "{{$gen.GVK.Kind}}",
+		}: {{$gen.ImportAlias}}.{{$gen.V1GeneratorFunc}}(),
+		{{- end}}
 	}
-	adapterServer := adapter.NewServer(kubeClient, scheme, providerMapping, specMapper, generatorMapping)
+	{{- end}}
 
-	log.Printf("[PROVIDER] Using v1 Fake Provider provider with generators wrapped with v2 adapter")
+	{{- if and .HasStores .HasGenerators}}
+	adapterServer := adapter.NewServer(kubeClient, scheme, providerMapping, specMapper, generatorMapping)
+	{{- else if .HasStores}}
+	adapterServer := adapterstore.NewServer(kubeClient, providerMapping, specMapper)
+	{{- else if .HasGenerators}}
+	adapterServer := adaptergenerator.NewServer(kubeClient, scheme, generatorMapping)
+	{{- end}}
+
+	log.Printf("[PROVIDER] Using v1 {{.Provider.Provider.DisplayName}} provider{{if .HasGenerators}} with generators{{end}} wrapped with v2 adapter")
 	grpcServer, err := grpcserver.NewGRPCServer(grpcserver.ServerOptions{
 		EnableTLS: *enableTLS,
 		Verbose:   *verbose,
@@ -102,8 +148,12 @@ func main() {
 	}
 
 	// Register services
+	{{- if .HasStores}}
 	pb.RegisterSecretStoreProviderServer(grpcServer, adapterServer)
+	{{- end}}
+	{{- if .HasGenerators}}
 	genpb.RegisterGeneratorProviderServer(grpcServer, adapterServer)
+	{{- end}}
 
 	// Register health service
 	healthServer := health.NewServer()
@@ -129,8 +179,9 @@ func main() {
 	}()
 
 	// Start serving
-	log.Printf("Fake Provider Provider listening on %s", lis.Addr().String())
+	log.Printf("{{.Provider.Provider.DisplayName}} Provider listening on %s", lis.Addr().String())
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 }
+

@@ -103,7 +103,7 @@ proto: ## Generate protobuf code
 # ====================================================================================
 # Conformance
 
-reviewable: generate docs manifests helm.generate helm.schema.update helm.docs lint license.check helm.test.update test.crds.update tf.fmt ## Ensure a PR is ready for review.
+reviewable: generate docs manifests helm.generate helm.schema.update helm.docs lint license.check helm.test.update test.crds.update tf.fmt generate-providers verify-providers ## Ensure a PR is ready for review.
 	@go mod tidy
 	@cd e2e/ && go mod tidy
 	@cd apis/ && go mod tidy
@@ -196,6 +196,21 @@ fmt: golangci-lint ## Ensure consistent code style
 generate: ## Generate code and crds
 	@./hack/crd.generate.sh $(BUNDLE_DIR) $(CRD_DIR)
 	@$(OK) Finished generating deepcopy and crds
+
+generate-providers: ## Generate provider main.go and Dockerfile files from provider.yaml configs
+	@$(INFO) Generating provider files
+	@cd providers/v2/hack && go run generate-provider-main.go -providers-dir=..
+	@$(OK) Generated provider files
+
+verify-providers: ## Verify that provider files are up to date
+	@$(INFO) Verifying provider files are up to date
+	@cd providers/v2/hack && go run generate-provider-main.go -providers-dir=.. -dry-run
+	@if ! git diff --quiet providers/v2/*/main.go providers/v2/*/Dockerfile 2>/dev/null; then \
+		echo "Provider files are out of date. Run 'make generate-providers' to update them."; \
+		git diff providers/v2/*/main.go providers/v2/*/Dockerfile; \
+		exit 1; \
+	fi
+	@$(OK) Provider files are up to date
 
 # ====================================================================================
 # Local Utility
