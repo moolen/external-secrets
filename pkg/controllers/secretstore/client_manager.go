@@ -33,6 +33,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	esv1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
+	pb "github.com/external-secrets/external-secrets/proto/provider"
+	adapterstore "github.com/external-secrets/external-secrets/providers/v2/adapter/store"
+	"github.com/external-secrets/external-secrets/providers/v2/common/grpc"
 )
 
 const (
@@ -59,11 +62,16 @@ type Manager struct {
 
 type clientKey struct {
 	providerType string
+	// For v2 providers, store the provider name and namespace
+	v2ProviderName      string
+	v2ProviderNamespace string
 }
 
 type clientVal struct {
 	client esv1.SecretsClient
 	store  esv1.GenericStore
+	// For v2 providers, store the generation for cache invalidation
+	v2ProviderGeneration int64
 }
 
 // NewManager constructs a new manager with defaults.
@@ -112,6 +120,9 @@ func (m *Manager) GetFromStore(ctx context.Context, store esv1.GenericStore, nam
 // Do not close the client returned from this func, instead close
 // the manager once you're done with recinciling the external secret.
 func (m *Manager) Get(ctx context.Context, storeRef esv1.SecretStoreRef, namespace string, sourceRef *esv1.StoreGeneratorSourceRef) (esv1.SecretsClient, error) {
+	if storeRef.Kind == "Provider" {
+		return m.getV2ProviderClient(ctx, storeRef.Name, namespace)
+	}
 	if sourceRef != nil && sourceRef.SecretStoreRef != nil {
 		storeRef = *sourceRef.SecretStoreRef
 	}
@@ -141,10 +152,99 @@ func (m *Manager) Get(ctx context.Context, storeRef esv1.SecretStoreRef, namespa
 	return m.GetFromStore(ctx, store, namespace)
 }
 
+// getV2ProviderClient creates or retrieves a cached gRPC client for a v2 Provider.
+func (m *Manager) getV2ProviderClient(ctx context.Context, providerName, namespace string) (esv1.SecretsClient, error) {
+	// Fetch the Provider resource
+	var provider esv1.Provider
+	providerKey := types.NamespacedName{
+		Name:      providerName,
+		Namespace: namespace,
+	}
+	if err := m.client.Get(ctx, providerKey, &provider); err != nil {
+		return nil, fmt.Errorf("failed to get Provider %q: %w", providerName, err)
+	}
+
+	// Create cache key
+	cacheKey := clientKey{
+		providerType:        "v2-provider",
+		v2ProviderName:      providerName,
+		v2ProviderNamespace: namespace,
+	}
+
+	// Check if we have a cached client
+	if cached, ok := m.clientMap[cacheKey]; ok {
+		// Validate cache is still valid (check generation)
+		if cached.v2ProviderGeneration == provider.Generation {
+			m.log.V(1).Info("reusing cached v2 provider client",
+				"provider", providerName,
+				"namespace", namespace,
+				"generation", provider.Generation)
+			return cached.client, nil
+		}
+		// Cache is stale, clean up old client
+		m.log.V(1).Info("cleaning up stale v2 provider client",
+			"provider", providerName,
+			"namespace", namespace,
+			"oldGeneration", cached.v2ProviderGeneration,
+			"newGeneration", provider.Generation)
+		_ = cached.client.Close(ctx)
+		delete(m.clientMap, cacheKey)
+	}
+
+	m.log.V(1).Info("creating new v2 provider client",
+		"provider", providerName,
+		"namespace", namespace,
+		"address", provider.Spec.Config.Address)
+
+	// Get provider address
+	address := provider.Spec.Config.Address
+	if address == "" {
+		return nil, fmt.Errorf("provider address is required in Provider %q", providerName)
+	}
+
+	// Load TLS configuration
+	// TODO: use namespace of controller
+	tlsConfig, err := grpc.LoadClientTLSConfig(ctx, m.client, provider.Spec.Config.Address, "external-secrets-system")
+	if err != nil {
+		return nil, fmt.Errorf("failed to load TLS config for Provider %q: %w", providerName, err)
+	}
+
+	// Create gRPC client
+	grpcClient, err := grpc.NewClient(address, tlsConfig)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create gRPC client for Provider %q: %w", providerName, err)
+	}
+
+	// Convert ProviderReference to protobuf format
+	providerRef := &pb.ProviderReference{
+		ApiVersion: provider.Spec.Config.ProviderRef.APIVersion,
+		Kind:       provider.Spec.Config.ProviderRef.Kind,
+		Name:       provider.Spec.Config.ProviderRef.Name,
+		Namespace:  provider.Spec.Config.ProviderRef.Namespace,
+	}
+
+	// Wrap with V2ClientWrapper
+	wrappedClient := adapterstore.NewClient(grpcClient, providerRef, namespace)
+
+	// Cache the client
+	m.clientMap[cacheKey] = &clientVal{
+		client:               wrappedClient,
+		store:                nil, // v2 providers don't use GenericStore
+		v2ProviderGeneration: provider.Generation,
+	}
+
+	m.log.Info("v2 provider client created and cached",
+		"provider", providerName,
+		"namespace", namespace,
+		"address", address)
+
+	return wrappedClient, nil
+}
+
 // returns a previously stored client from the cache if store and store-version match
 // if a client exists for the same provider which points to a different store or store version
 // it will be cleaned up.
-func (m *Manager) getStoredClient(ctx context.Context, storeProvider esv1.Provider, store esv1.GenericStore) esv1.SecretsClient {
+func (m *Manager) getStoredClient(ctx context.Context, storeProvider esv1.ProviderInterface, store esv1.GenericStore) esv1.SecretsClient {
 	idx := storeKey(storeProvider)
 	val, ok := m.clientMap[idx]
 	if !ok {
@@ -179,7 +279,7 @@ func (m *Manager) getStoredClient(ctx context.Context, storeProvider esv1.Provid
 	return nil
 }
 
-func storeKey(storeProvider esv1.Provider) clientKey {
+func storeKey(storeProvider esv1.ProviderInterface) clientKey {
 	return clientKey{
 		providerType: fmt.Sprintf("%T", storeProvider),
 	}

@@ -45,13 +45,13 @@ import (
 	"github.com/external-secrets/external-secrets/pkg/controllers/pushsecret/psmetrics"
 	"github.com/external-secrets/external-secrets/pkg/controllers/secretstore"
 	"github.com/external-secrets/external-secrets/pkg/controllers/util"
-	"github.com/external-secrets/external-secrets/pkg/esutils"
-	"github.com/external-secrets/external-secrets/pkg/esutils/resolvers"
-	"github.com/external-secrets/external-secrets/pkg/generator/statemanager"
-	"github.com/external-secrets/external-secrets/pkg/provider/util/locks"
+	"github.com/external-secrets/external-secrets/runtime/esutils"
+	"github.com/external-secrets/external-secrets/runtime/esutils/resolvers"
+	"github.com/external-secrets/external-secrets/runtime/statemanager"
+	"github.com/external-secrets/external-secrets/runtime/util/locks"
 
 	// Load registered generators.
-	_ "github.com/external-secrets/external-secrets/pkg/generator/register"
+	_ "github.com/external-secrets/external-secrets/pkg/register"
 )
 
 const (
@@ -162,6 +162,48 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 			log.Error(err, errPatchStatus)
 		}
 	}()
+	// Get secret stores early so they can be used for finalizer deletion
+	secretStoresV2, err := r.GetSecretStoresV2(ctx, ps)
+	if err != nil {
+		r.markAsFailed(err.Error(), &ps, nil)
+		return ctrl.Result{}, err
+	}
+
+	// Filter and prepare stores (this logic was moved from later)
+	activeSecretStores := make(map[esapi.PushSecretStoreRef]interface{}, len(secretStoresV2))
+	for ref, store := range secretStoresV2 {
+		if v1Store, ok := store.(esv1.GenericStore); ok {
+			if !v1Store.GetDeletionTimestamp().IsZero() {
+				log.Info("skipping SecretStore that is being deleted", "storeName", v1Store.GetName(), "storeKind", v1Store.GetKind())
+				continue
+			}
+		}
+		activeSecretStores[ref] = store
+	}
+
+	activeSecretStoresV1 := make(map[esapi.PushSecretStoreRef]esv1.GenericStore)
+	for ref, store := range activeSecretStores {
+		if v1Store, ok := store.(esv1.GenericStore); ok {
+			activeSecretStoresV1[ref] = v1Store
+		}
+	}
+
+	filteredV1Stores, err := removeUnmanagedStores(ctx, req.Namespace, r, activeSecretStoresV1)
+	if err != nil {
+		r.markAsFailed(err.Error(), &ps, nil)
+		return ctrl.Result{}, err
+	}
+
+	finalStores := make(map[esapi.PushSecretStoreRef]interface{})
+	for ref, store := range filteredV1Stores {
+		finalStores[ref] = store
+	}
+	for ref, store := range activeSecretStores {
+		if _, ok := store.(esv1.GenericStore); !ok {
+			finalStores[ref] = store
+		}
+	}
+
 	switch ps.Spec.DeletionPolicy {
 	case esapi.PushSecretDeletionPolicyDelete:
 		// finalizer logic. Only added if we should delete the secrets
@@ -174,7 +216,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 			}
 		} else if controllerutil.ContainsFinalizer(&ps, pushSecretFinalizer) {
 			// trigger a cleanup with no Synced Map
-			badState, err := r.DeleteSecretFromProviders(ctx, &ps, esapi.SyncedPushSecretsMap{}, mgr)
+			badState, err := r.DeleteSecretFromProvidersV2(ctx, &ps, esapi.SyncedPushSecretsMap{}, finalStores)
 			if err != nil {
 				msg := fmt.Sprintf("Failed to Delete Secrets from Provider: %v", err)
 				r.markAsFailed(msg, &ps, badState)
@@ -207,38 +249,16 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return ctrl.Result{RequeueAfter: refreshInt}, nil
 	}
 
+	// if no stores are managed by this controller
+	if len(finalStores) == 0 {
+		return ctrl.Result{}, nil
+	}
+
 	secrets, err := r.resolveSecrets(ctx, &ps)
 	if err != nil {
 		r.markAsFailed(errFailedGetSecret, &ps, nil)
 
 		return ctrl.Result{}, err
-	}
-	secretStores, err := r.GetSecretStores(ctx, ps)
-	if err != nil {
-		r.markAsFailed(err.Error(), &ps, nil)
-
-		return ctrl.Result{}, err
-	}
-
-	// Filter out SecretStores that are being deleted to avoid finalizer conflicts
-	activeSecretStores := make(map[esapi.PushSecretStoreRef]esv1.GenericStore, len(secretStores))
-	for ref, store := range secretStores {
-		// Skip stores that are being deleted
-		if !store.GetDeletionTimestamp().IsZero() {
-			log.Info("skipping SecretStore that is being deleted", "storeName", store.GetName(), "storeKind", store.GetKind())
-			continue
-		}
-		activeSecretStores[ref] = store
-	}
-
-	secretStores, err = removeUnmanagedStores(ctx, req.Namespace, r, activeSecretStores)
-	if err != nil {
-		r.markAsFailed(err.Error(), &ps, nil)
-		return ctrl.Result{}, err
-	}
-	// if no stores are managed by this controller
-	if len(secretStores) == 0 {
-		return ctrl.Result{}, nil
 	}
 
 	allSyncedSecrets := make(esapi.SyncedPushSecretsMap)
@@ -247,7 +267,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 			return ctrl.Result{}, err
 		}
 
-		syncedSecrets, err := r.PushSecretToProviders(ctx, secretStores, ps, &secret, mgr)
+		syncedSecrets, err := r.PushSecretToProvidersV2(ctx, finalStores, ps, &secret, mgr)
 		if err != nil {
 			if errors.Is(err, locks.ErrConflict) {
 				log.Info("retry to acquire lock to update the secret later", "error", err)
@@ -262,7 +282,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		}
 		switch ps.Spec.DeletionPolicy {
 		case esapi.PushSecretDeletionPolicyDelete:
-			badSyncState, err := r.DeleteSecretFromProviders(ctx, &ps, syncedSecrets, mgr)
+			badSyncState, err := r.DeleteSecretFromProvidersV2(ctx, &ps, syncedSecrets, finalStores)
 			if err != nil {
 				msg := fmt.Sprintf("Failed to Delete Secrets from Provider: %v", err)
 				r.markAsFailed(msg, &ps, badSyncState)
@@ -399,6 +419,35 @@ func (r *Reconciler) PushSecretToProviders(ctx context.Context, stores map[esapi
 			return out, err
 		}
 	}
+	return out, nil
+}
+
+// PushSecretToProvidersV2 pushes the secret data to both v1 and v2 secret stores.
+func (r *Reconciler) PushSecretToProvidersV2(ctx context.Context, stores map[esapi.PushSecretStoreRef]interface{}, ps esapi.PushSecret, secret *v1.Secret, mgr *secretstore.Manager) (esapi.SyncedPushSecretsMap, error) {
+	out := make(esapi.SyncedPushSecretsMap)
+
+	for ref, store := range stores {
+		// Check if it's a v2 store
+		syncedSecrets, err := r.handleV2Push(ctx, ref, store, ps, secret)
+		if err != nil {
+			return out, err
+		}
+
+		if syncedSecrets != nil {
+			// It was a v2 store and push succeeded
+			storeKey := fmt.Sprintf("%v/%v", ref.Kind, ref.Name)
+			out[storeKey] = syncedSecrets
+		} else {
+			// It's a v1 store, use existing logic
+			if v1Store, ok := store.(esv1.GenericStore); ok {
+				out, err = r.handlePushSecretDataForStore(ctx, ps, secret, out, mgr, v1Store.GetName(), ref.Kind)
+				if err != nil {
+					return out, err
+				}
+			}
+		}
+	}
+
 	return out, nil
 }
 

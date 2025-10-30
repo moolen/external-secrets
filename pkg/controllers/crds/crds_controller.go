@@ -36,7 +36,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/external-secrets/external-secrets/pkg/esutils"
+	"github.com/external-secrets/external-secrets/runtime/esutils"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
 	apiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -140,6 +140,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		r.readyStatusMap[req.NamespacedName.Name] = true
 		r.readyStatusMapMu.Unlock()
 	}
+
 	return ctrl.Result{RequeueAfter: r.RequeueInterval}, nil
 }
 

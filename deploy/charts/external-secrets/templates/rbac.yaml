@@ -14,9 +14,20 @@ metadata:
     {{- include "external-secrets.labels" . | nindent 4 }}
 rules:
   - apiGroups:
+    - "provider.external-secrets.io"
+    resources:
+    - "kubernetes"
+    - "awssecretsmanagers"
+    - "fakes"
+    verbs:
+    - "get"
+    - "list"
+    - "watch"
+  - apiGroups:
     - "external-secrets.io"
     resources:
     - "secretstores"
+    - "providers"
     {{- if .Values.processClusterStore }}
     - "clustersecretstores"
     {{- end }}
@@ -37,6 +48,8 @@ rules:
   - apiGroups:
     - "external-secrets.io"
     resources:
+    - "providers"
+    - "providers/status"
     - "externalsecrets"
     - "externalsecrets/status"
     {{- if .Values.openshiftFinalizers }}
