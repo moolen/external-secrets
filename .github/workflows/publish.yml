@@ -37,7 +37,7 @@ env:
   TAG_SUFFIX: ${{ inputs.tag-suffix }}
   ARCH: ${{ inputs.build-arch }}
   DOCKERFILE: ${{ inputs.dockerfile }}
-  IS_FORK: ${{ secrets.IS_FORK }}
+  IS_FORK: ${{ startsWith(inputs.ref, 'refs/pull/') && '' || '1' }}
 
 permissions:
   contents: read
