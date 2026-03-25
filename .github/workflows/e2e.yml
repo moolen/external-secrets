@@ -60,7 +60,7 @@ jobs:
     permissions:
       id-token: write #for oidc auth with aws/gcp/azure
       contents: read  #for checkout
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor !='dependabot[bot]'
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.actor !='dependabot[bot]' && env.AWS_OIDC_ROLE_ARN != ''
     steps:
     - uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
       with:

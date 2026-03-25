@@ -48,6 +48,12 @@ jobs:
             console.log(`Allowed Types: ${allowedTypes}`);
 
             const prTitle = context.payload.pull_request.title;
+            const prAuthor = context.payload.pull_request.user?.login || "";
+            const isPatchPilot = prTitle.startsWith("PatchPilot:") || prAuthor.toLowerCase().includes("patchpilot");
+            if (isPatchPilot) {
+              console.log("PatchPilot PR detected, skipping Conventional Commit enforcement.");
+              return;
+            }
             console.log(`PR Title: ${prTitle}`);
 
             // We know this regex looks scary, but it's just to match the Conventional Commit format

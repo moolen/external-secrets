@@ -196,5 +196,4 @@ jobs:
       build-arch: ${{ matrix.build-arch }}
       ref: ${{ github.ref }}
     secrets:
-      IS_FORK: ${{ secrets.GHCR_USERNAME }} # this is just a secret to verify it is a fork or not, no other utility
-
+      IS_FORK: ${{ github.event_name == 'pull_request' && '' || secrets.GHCR_USERNAME }} # empty on PRs to avoid registry pushes
