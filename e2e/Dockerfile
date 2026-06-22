@@ -1,7 +1,7 @@
 FROM golang:1.25.2-bookworm@sha256:42d8e9dea06f23d0bfc908826455213ee7f3ed48c43e287a422064220c501be9 AS builder
 RUN go install github.com/onsi/ginkgo/v2/ginkgo@v2.1.6
 
-FROM alpine:3.22.2@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412
+FROM alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
 RUN apk add -U --no-cache \
     ca-certificates \
     bash \
